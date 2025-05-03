@@ -10,9 +10,12 @@ import platform
 
 def IPV4():
     try:
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         ip_info= subprocess.check_output([
         'powershell','-command','Get-NetAdapter','-Physical','|','powershell','-command','Get-NetIPConfiguration'],
-        text=True
+        text=True,
+        startupinfo=startupinfo
         )
         return re.search(r'ipv4address\s+:\s(\d+.\d+.\d+.\d+)',ip_info.lower()).group(1)
 
