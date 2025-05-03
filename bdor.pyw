@@ -1,7 +1,6 @@
 import subprocess
 import socket
 import os
-import re
 import threading
 import platform
 
@@ -10,14 +9,10 @@ import platform
 
 def IPV4():
     try:
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        ip_info= subprocess.check_output([
-        'powershell','-command','Get-NetAdapter','-Physical','|','powershell','-command','Get-NetIPConfiguration'],
-        text=True,
-        startupinfo=startupinfo
-        )
-        return re.search(r'ipv4address\s+:\s(\d+.\d+.\d+.\d+)',ip_info.lower()).group(1)
+        
+        s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        s.connect(('10.255.255.255',1))
+        return s.getsockname()[0]
 
     except:
         print('error obteniendo ipv4')
