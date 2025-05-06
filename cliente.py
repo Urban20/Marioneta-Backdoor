@@ -14,6 +14,8 @@ arg = args.parse_args()
 
 
 # cliente backdor
+# Autor: Matias Urbaneja (Urban20)
+# https://github.com/Urban20
 
 n = 0
 timeout = 5
