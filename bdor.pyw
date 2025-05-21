@@ -73,5 +73,5 @@ if __name__ == '__main__' and platform.system() == 'Windows':
     try:
         main()
     except Exception as e:
-        os.system(f'msg * hubo un error: {e}')
+        print(f'hubo un error: {e}')
         exit(0)
