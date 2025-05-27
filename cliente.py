@@ -14,6 +14,19 @@ from colorama import init
 
 init()
 
+
+logo = r'''
+        ##################################
+        # _   _      _       ____        #
+        #| | | |_ __| |__   / __ \ _ __  #
+        #| | | | '__| '_ \ / / _` | '_ \ #
+        #| |_| | |  | |_) | | (_| | | | |#
+        # \___/|_|  |_.__/ \ \__,_|_| |_|#
+        #                   \____/       #
+        ##################################
+'''
+
+
 args=argparse.ArgumentParser(description='pequeña utilidad para controlar remotamente una maquina dentro de la red via linea de comandos')
 args.add_argument('-P','--puerto',
                   type=int,
@@ -25,6 +38,7 @@ arg = args.parse_args()
 
 n = 0 # valor que percibe la primera conexion
 timeout = 5
+print('\033[0;35m' + logo + '\033[0m')
 
 if platform.system() == 'Linux':
     borrar = 'clear'
