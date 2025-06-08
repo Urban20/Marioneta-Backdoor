@@ -1,2 +1,4 @@
-Edge.exe
+*.exe
 *.jpg
+*.ico
+*.webp
