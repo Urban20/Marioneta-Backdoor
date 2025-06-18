@@ -30,7 +30,13 @@ func main() {
 
 	if ip != "" {
 		fmt.Println(color.Violeta + color.LOGO + color.Reset)
-		conexiones.Conexion(ip, timeout)
+		error := conexiones.Conexion(ip, timeout)
+		if error != nil {
+
+			fmt.Println("error: ", error)
+			os.Exit(1)
+		}
+
 	} else {
 		fmt.Println(color.Rojo + "[!] ingresar un valor de ip (ip:puerto)" + color.Reset)
 		os.Exit(0)

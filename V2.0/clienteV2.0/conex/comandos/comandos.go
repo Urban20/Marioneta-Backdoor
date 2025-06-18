@@ -25,7 +25,7 @@ const INSTRUCCION = `
 // funcion que abstrae el envio de paquetes al host
 func envio(conexiones net.Conn, envio string) error {
 
-	err_t := conexiones.SetDeadline(time.Now().Add(time.Second * 3))
+	err_t := conexiones.SetDeadline(time.Now().Add(time.Second * 2))
 	if err_t != nil {
 		return errors.New("tiempo agotado")
 	}

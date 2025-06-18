@@ -12,12 +12,8 @@ import (
 	"time"
 )
 
-const TIMEOUT = 3
-
-var timeout_err net.Error
-
 /*
-	en caso de algun error se llama a esta funcion para reiniciar la conexion y no arrastrar errores
+en caso de algun error se llama a esta funcion para reiniciar la conexion y no arrastrar errores
 
 es una solucion que encontre para no saturar el programa y que se sigan generando errores
 */
@@ -35,23 +31,22 @@ func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 }
 
 // funcion que se encarga de establecer conexion TCP con el host
-func Conexion(ip string, tiempo time.Duration) {
+func Conexion(ip string, tiempo time.Duration) error {
 	conec, error := net.DialTimeout("tcp", ip, time.Second*tiempo)
 
-	fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
+	if error != nil { // si hay algun error
 
-	if errors.As(error, &timeout_err) && timeout_err.Timeout() {
-		fmt.Println(color.Rojo + "\n[!]tiempo agotado\n" + color.Reset)
-
-	} else if error != nil { // si hay algun error
-		fmt.Printf(color.Rojo+"\n[!] error:\n%s \n", error.Error()+color.Reset)
+		return errors.New("\n[!]hubo un error al establecer conexion")
 
 	} else {
+		fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
+
 		err := remoto.Comando(conec)
 		if err != nil {
 			fmt.Println(err)
 			Reconexion(conec, ip, tiempo)
 		}
 	}
+	return nil
 
 }
