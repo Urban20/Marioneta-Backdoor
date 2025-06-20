@@ -17,6 +17,11 @@ import (
 	"os"
 )
 
+const (
+	BUFFER_IMG    = 1_000_000
+	BUFFER_TAMAÑO = 8
+)
+
 func Escribir_img(img_byte []byte, nombre_arch string) {
 	arch, error := os.Create(fmt.Sprintf("%s.png", nombre_arch))
 	if error != nil {
@@ -39,8 +44,8 @@ obtener_img : net.conn -> byte
 */
 func Obtener_img(conn net.Conn) ([]byte, error) {
 	// retornar bytes
-	tamaño_img := make([]byte, 8)
-	img := make([]byte, 1_000_000)
+	tamaño_img := make([]byte, BUFFER_TAMAÑO)
+	img := make([]byte, BUFFER_IMG)
 	contador := 0
 
 	_, error := conn.Write([]byte("ss"))
