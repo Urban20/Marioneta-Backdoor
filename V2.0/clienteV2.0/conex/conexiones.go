@@ -39,7 +39,7 @@ func Conexion(ip string, tiempo time.Duration) error {
 		return errors.New("\n[!]hubo un error al establecer conexion")
 
 	} else {
-		fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
+		fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n\r\r"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
 
 		err := remoto.Comando(conec)
 		if err != nil {

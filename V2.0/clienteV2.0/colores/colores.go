@@ -11,7 +11,7 @@ const LOGO = `
 		██    ██ ██   ██ ██   ██ ██ ██ ██ ██  ██ ██ 
 		 ██████  ██   ██ ██████   █ ████  ██   ████ 
                                             
-                                        
+         cliente V 2.0                               
 `
 
 // colores de terminal que se usan en los outputs de la consola
