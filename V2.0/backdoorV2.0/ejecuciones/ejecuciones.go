@@ -158,7 +158,9 @@ func Escucha(conn net.Listener) {
 
 		} else { // ejecucion de cualquier otro comando
 
-			contexto, cancel := context.WithTimeout(context.Background(), time.Second*5)
+			contexto, cancelar := context.WithTimeout(context.Background(), time.Second*5)
+
+			defer cancelar()
 
 			go func() {
 				salida, error := Ejecucion(entrada)
@@ -173,8 +175,8 @@ func Escucha(conn net.Listener) {
 
 			select {
 			case <-contexto.Done():
-				Envio(cliente, []byte("tiempo de ejecucion agotado"))
-				cancel()
+				Envio(cliente, []byte("[!] tiempo de ejecucion agotado"))
+
 			case salida := <-ch_salida:
 
 				err := Envio(cliente, salida)

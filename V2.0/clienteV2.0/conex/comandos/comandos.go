@@ -23,7 +23,7 @@ const INSTRUCCION = `
 //[ss] capturar pantalla  //
 `
 const (
-	TIMEOUT = 2
+	TIMEOUT = 10    // tiempo en segundos que espera el cliente para recibir un paquete
 	BUFFER  = 20000 //tamaño del buffer de funcion envio
 )
 
