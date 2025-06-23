@@ -55,33 +55,22 @@ func envio(conexiones net.Conn, envio string) error {
 	return nil
 }
 
-// funcion que retorna el comando clear dependiendo del sistema operativo
-func Sistema() []string {
-	if runtime.GOOS == "windows" {
-
-		return []string{"powershell", "-command", "clear"}
-	} else if runtime.GOOS == "linux" {
-
-		return []string{"bash", "-c", "clear"}
-	} else {
-
-		return nil
-	}
-
-}
-
 // abstraigo la funcion para borrar consola
-func Borrar_consola(comando []string) error {
+func Borrar_consola() error {
+	if runtime.GOOS == "windows" {
+		comandos := exec.Command("powershell", "-command", "clear")
+		comandos.Stdout = os.Stdout
+		error := comandos.Run()
+		fmt.Println(color.Violeta + color.LOGO + color.Reset)
+		if error != nil {
+			return errors.New("[!] error al ejecutar comando")
+		}
 
-	comandos := exec.Command(comando[0], comando...)
-	comandos.Stdout = os.Stdout
-	error := comandos.Run()
-	fmt.Println(color.Violeta + color.LOGO + color.Reset)
-	if error != nil {
-		return errors.New("[!] error al ejecutar comando")
+	} else {
+		fmt.Print("\033[2J")
+
 	}
 	return nil
-
 }
 
 // funcion cuyo proposito es la ejecucion de comandos
@@ -93,14 +82,9 @@ func Comando(conexiones net.Conn) error {
 	entrada := input.Input("[#] comando >> ")
 	switch entrada {
 	case "0": // borrar consola
-		sisOP := Sistema()
-		if sisOP != nil {
-			error := Borrar_consola(sisOP)
-			if error != nil {
-				return error
-			}
-		} else {
-			fmt.Println("hubo un problema al intentar borrar la consola")
+		err := Borrar_consola()
+		if err != nil {
+			fmt.Println(err)
 		}
 
 	case "1": // apagar equipo
@@ -116,6 +100,7 @@ func Comando(conexiones net.Conn) error {
 
 	case "q":
 		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
+		envio(conexiones, "q")
 		conexiones.Close()
 		os.Exit(0)
 	case "ss":
