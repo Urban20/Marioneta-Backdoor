@@ -13,12 +13,12 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
 
 const (
-	BUFFER_IMG    = 1_000_000
 	BUFFER_TAMAÑO = 8
 )
 
@@ -45,38 +45,30 @@ obtener_img : net.conn -> byte
 func Obtener_img(conn net.Conn) ([]byte, error) {
 	// retornar bytes
 	tamaño_img := make([]byte, BUFFER_TAMAÑO)
-	img := make([]byte, BUFFER_IMG)
-	contador := 0
 
 	_, error := conn.Write([]byte("ss"))
 	if error != nil {
 		return nil, errors.New("[!] error al obtener la imagen")
 
 	}
-	n, error := conn.Read(tamaño_img) // lectura del tamaño de la imagen
-	if error != nil {
+	_, err := io.ReadFull(conn, tamaño_img) // lectura del tamaño de la imagen
+	if err != nil {
 		return nil, errors.New("error en la lectura del tamaño")
 
 	}
-	total := binary.BigEndian.Uint64(tamaño_img[:n]) //tamaño total de la imagen
+	total := binary.BigEndian.Uint64(tamaño_img) //tamaño total de la imagen
 
 	fmt.Println("cantidad total de la imagen: ", total)
-	for {
-		n_imagen, error := conn.Read(img[contador:])
 
-		if error != nil {
-			return nil, errors.New("[!] error al obtener la imagen")
+	img := make([]byte, total) // crear buffer de la imagen
 
-		}
-		contador += n_imagen
+	_, erro := io.ReadFull(conn, img) // leer toda la imagen
 
-		fmt.Println("cantidad obtenida: ", contador)
-
-		if contador >= int(total) {
-			fmt.Println("[*] se obtuvo la imagen")
-			return img, nil
-		}
+	if erro != nil {
+		return nil, errors.New("[!] error al obtener la imagen")
 
 	}
+	fmt.Println("[*] se obtuvo la imagen")
+	return img, nil
 
 }
