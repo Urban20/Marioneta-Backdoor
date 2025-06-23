@@ -19,14 +19,14 @@ import (
 )
 
 var arg = flag.String("IP", "", "ip:puerto del host")
-var arg2 = flag.Duration("t", 3, "tiempo de espera de la conexion")
+
+const timeout = 10
 
 func main() {
 
 	flag.Parse()
 
 	ip := *arg
-	timeout := *arg2
 
 	if ip != "" {
 		fmt.Println(color.Violeta + color.LOGO + color.Reset)

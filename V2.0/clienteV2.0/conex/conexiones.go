@@ -17,8 +17,7 @@ en caso de algun error se llama a esta funcion para reiniciar la conexion y no a
 es una solucion que encontre para no saturar el programa y que se sigan generando errores
 */
 func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
-	sisop := remoto.Sistema()
-	remoto.Borrar_consola(sisop)
+	remoto.Borrar_consola()
 	fmt.Println("reconectando...")
 	error := net.Close()
 	if error != nil {

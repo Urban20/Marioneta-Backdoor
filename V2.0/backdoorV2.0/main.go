@@ -17,7 +17,6 @@ Autor : Urb@n - https//:www.github.com/Urban20/ - "estamos hack"
 */
 
 import (
-	"fmt"
 	"os"
 	"server/conexiones"
 	ejec "server/ejecuciones"
@@ -28,8 +27,7 @@ const PUERTO = "9999"
 func main() {
 	ipv4, error := conexiones.Ipv4()
 	if error != nil {
-		fmt.Println("hubo un error: ", error)
-		os.Exit(1)
+		panic("error fatal: no se pudo obtener ipv4")
 	} else {
 		conex, error := conexiones.Server(ipv4, PUERTO)
 		if error != nil {
