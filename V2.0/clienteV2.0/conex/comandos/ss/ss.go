@@ -58,7 +58,7 @@ func Obtener_img(conn net.Conn) ([]byte, error) {
 	}
 	total := binary.BigEndian.Uint64(tamaño_img) //tamaño total de la imagen
 
-	fmt.Println("cantidad total de la imagen: ", total)
+	fmt.Printf("cantidad total de la imagen: %d MB aprox\n", total/1_000_000)
 
 	img := make([]byte, total) // crear buffer de la imagen
 

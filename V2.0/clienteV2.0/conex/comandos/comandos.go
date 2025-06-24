@@ -110,6 +110,7 @@ func Comando(conexiones net.Conn) error {
 		}
 		nombre := input.Input("[*] nombre del png (sin extension)>> ")
 		ss.Escribir_img(byte_img, nombre)
+		exec.Command("powershell", "-command", "start", fmt.Sprintf("%s.png", nombre)).Run()
 
 	default:
 		err := envio(conexiones, entrada)
