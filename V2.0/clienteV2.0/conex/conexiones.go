@@ -18,10 +18,10 @@ es una solucion que encontre para no saturar el programa y que se sigan generand
 */
 func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 	remoto.Borrar_consola()
-	fmt.Println("reconectando...")
+	fmt.Println("[*] reconectando...")
 	error := net.Close()
 	if error != nil {
-		fmt.Println("error fatal: ", error)
+		fmt.Println(color.Rojo+"[!] error fatal: ", error.Error()+color.Reset)
 		os.Exit(1)
 	} else {
 		Conexion(ip, tiempo)

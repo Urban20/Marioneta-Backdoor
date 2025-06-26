@@ -18,7 +18,7 @@ import (
 	"os"
 )
 
-var arg = flag.String("IP", "", "ip:puerto del host")
+var arg = flag.String("IP", "", "[ip]:[puerto del host]")
 
 const timeout = 10
 

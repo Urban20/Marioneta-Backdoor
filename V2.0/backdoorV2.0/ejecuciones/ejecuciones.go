@@ -39,11 +39,11 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 	buffer_img := make([]byte, stat.Size()) // obtengo el tamaño y creo un buffer
 
 	if error != nil {
-		return errors.New("no se encuentra la imagen")
+		return errors.New("[!] no se encuentra la imagen")
 	}
 	n, error := imagen.Read(buffer_img)
 	if error != nil {
-		return errors.New("error al codificar imagen")
+		return errors.New("[!] error al codificar imagen")
 	}
 	binary.BigEndian.PutUint64(buffer_tamaño, uint64(n))
 	Envio(conexion, buffer_tamaño)
@@ -207,12 +207,12 @@ func Cliente(cliente net.Conn) {
 			err := Envio(cliente, salida)
 
 			if err != nil {
-				fmt.Println("hubo un problema al enviar")
+				fmt.Println("[!] hubo un problema al enviar")
 			}
 
 		case err := <-ch_error:
 
-			fmt.Println("hubo un problema ", err)
+			fmt.Println("[!] hubo un problema: ", err)
 		}
 
 	}
