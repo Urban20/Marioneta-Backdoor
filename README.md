@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://i.postimg.cc/25mCzCp7/64192c15-1039-4c90-ac27-15fd8d8abdc4.png)](https://postimg.cc/hXCksWtX)" alt="Descripción" width="500"/>
+</p>
+
 ## Descripcion:
 Este repositorio contiene programas que sirven para controlar computadoras Windows en la red interna
 Se tiene un programa host que es el backdoor en cuestion y un programa cliente que es el que se conecta y envia los comandos que el host va a ejecutar y retornar al cliente
