@@ -9,8 +9,8 @@ import (
 
 // funcion que intenta obtener la direccion ipv4 de la maquina
 func Ipv4() (string, error) {
-	con, error := net.Dial("udp", "10.255.255.255:2")
-	if error != nil {
+	con, dial_error := net.Dial("udp", "10.255.255.255:2")
+	if dial_error != nil {
 		return "", errors.New("error al obtener direccion ipv4 (Ipv4() fallo)")
 	}
 	con.Close()
@@ -21,8 +21,8 @@ func Ipv4() (string, error) {
 // se pone en escucha la maquina, se retorna la proxima conexion en caso de exito
 func Server(ip string, puerto string) (net.Listener, error) {
 
-	conexion, error := net.Listen("tcp", fmt.Sprintf("%s:%s", ip, puerto))
-	if error != nil {
+	conexion, escucha_error := net.Listen("tcp", fmt.Sprintf("%s:%s", ip, puerto))
+	if escucha_error != nil {
 		return nil, errors.New("error al levantar el server (server () fallo)")
 	}
 

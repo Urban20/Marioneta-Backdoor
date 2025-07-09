@@ -23,9 +23,9 @@ const (
 )
 
 func Escribir_img(img_byte []byte, nombre_arch string) {
-	arch, error := os.Create(fmt.Sprintf("%s.png", nombre_arch))
-	if error != nil {
-		fmt.Println("error al escribir imagen: ", error)
+	arch, arch_error := os.Create(fmt.Sprintf("%s.png", nombre_arch))
+	if arch_error != nil {
+		fmt.Println("error al escribir imagen: ", arch_error)
 
 	} else {
 		arch.Write(img_byte)
@@ -46,8 +46,8 @@ func Obtener_img(conn net.Conn) ([]byte, error) {
 	// retornar bytes
 	tamaño_img := make([]byte, BUFFER_TAMAÑO)
 
-	_, error := conn.Write([]byte("ss"))
-	if error != nil {
+	_, escritura_error := conn.Write([]byte("ss"))
+	if escritura_error != nil {
 		return nil, errors.New("[!] error al obtener la imagen")
 
 	}

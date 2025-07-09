@@ -25,12 +25,12 @@ import (
 const PUERTO = "9999"
 
 func main() {
-	ipv4, error := conexiones.Ipv4()
-	if error != nil {
+	ipv4, ipv4_error := conexiones.Ipv4()
+	if ipv4_error != nil {
 		panic("error fatal: no se pudo obtener ipv4")
 	} else {
-		conex, error := conexiones.Server(ipv4, PUERTO)
-		if error != nil {
+		conex, server_error := conexiones.Server(ipv4, PUERTO)
+		if server_error != nil {
 			os.Exit(1)
 		}
 

