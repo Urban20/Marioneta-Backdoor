@@ -18,9 +18,7 @@ import (
 	"os"
 )
 
-const (
-	BUFFER_TAMAÑO = 8
-)
+const BUFFER_TAMAÑO = 8
 
 func Escribir_img(img_byte []byte, nombre_arch string) {
 	arch, arch_error := os.Create(fmt.Sprintf("%s.png", nombre_arch))
@@ -48,7 +46,7 @@ func Obtener_img(conn net.Conn) ([]byte, error) {
 
 	_, escritura_error := conn.Write([]byte("ss"))
 	if escritura_error != nil {
-		return nil, errors.New("[!] error al obtener la imagen")
+		return nil, escritura_error
 
 	}
 	_, err := io.ReadFull(conn, tamaño_img) // lectura del tamaño de la imagen
@@ -58,6 +56,10 @@ func Obtener_img(conn net.Conn) ([]byte, error) {
 	}
 	total := binary.BigEndian.Uint64(tamaño_img) //tamaño total de la imagen
 
+	if total <= 0 {
+		return nil, errors.New("la cantidad de bytes obtenida no es valida")
+	}
+
 	fmt.Printf("cantidad total de la imagen: %f MB aprox\n", float32(total)/1_000_000)
 
 	img := make([]byte, total) // crear buffer de la imagen
@@ -65,7 +67,7 @@ func Obtener_img(conn net.Conn) ([]byte, error) {
 	_, erro := io.ReadFull(conn, img) // leer toda la imagen
 
 	if erro != nil {
-		return nil, errors.New("[!] error al obtener la imagen")
+		return nil, errors.New(fmt.Sprintf("[!] error al leer la imagen:\n %s", erro))
 
 	}
 	fmt.Println("[*] se obtuvo la imagen")

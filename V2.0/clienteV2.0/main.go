@@ -20,7 +20,7 @@ import (
 
 var arg = flag.String("IP", "", "[ip]:[puerto del host]")
 
-const timeout = 10
+const TIMEOUT = 5
 
 func main() {
 
@@ -30,7 +30,7 @@ func main() {
 
 	if ip != "" {
 		fmt.Println(color.Violeta + color.LOGO + color.Reset)
-		conex_error := conexiones.Conexion(ip, timeout)
+		conex_error := conexiones.Conexion(ip, TIMEOUT)
 		if conex_error != nil {
 
 			fmt.Println("error: ", conex_error)

@@ -31,6 +31,7 @@ func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 
 // funcion que se encarga de establecer conexion TCP con el host
 func Conexion(ip string, tiempo time.Duration) error {
+
 	conec, dial_error := net.DialTimeout("tcp", ip, time.Second*tiempo)
 
 	if dial_error != nil { // si hay algun error
@@ -43,6 +44,7 @@ func Conexion(ip string, tiempo time.Duration) error {
 		err := remoto.Comando(conec)
 		if err != nil {
 			fmt.Println(err)
+			time.Sleep(time.Second * 1)
 			Reconexion(conec, ip, tiempo)
 		}
 	}

