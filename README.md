@@ -10,7 +10,7 @@
 </p>
 
 > ⚠️ **ADVERTENCIA ÉTICA IMPORTANTE**  
-> El uso en sistemas sin autorización expresa es ilegal. No me hago responzable de su mal uso. Desarrollé estos programas para utilizar en sistemas propios
+> El uso en sistemas sin autorización expresa es ilegal. No me hago responsable de su mal uso. Desarrollé estos programas para utilizar en sistemas propios
 
 
 
