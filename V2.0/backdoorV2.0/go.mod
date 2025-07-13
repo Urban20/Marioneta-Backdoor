@@ -3,6 +3,7 @@ module server
 go 1.24.4
 
 require (
+	github.com/Urban20/ColorGo v0.0.0-20250614143934-678decdc5fc3 // indirect
 	github.com/gen2brain/shm v0.1.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
