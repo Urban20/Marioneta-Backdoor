@@ -24,6 +24,14 @@
 - [Consideraciones de Seguridad](#consideraciones-de-seguridad)
 - [Apoyá el Proyecto](#-apoyá-el-proyecto)
 
+## ¿Tenés alguna pregunta o idea que te gustaria compartir?
+
+#### Podés exponerla en :
+
+<a href="https://github.com/Urban20/Marioneta-Backdoor/discussions">
+  <img src="https://img.shields.io/badge/Discusiones-%23EA4C89.svg?style=social&logo=github" alt="Discussions" width=120>
+</a>
+
 ## Visión General
 
 Este repositorio es un conjunto de herramientas para administración remota en redes locales que consta de dos componentes principales:
