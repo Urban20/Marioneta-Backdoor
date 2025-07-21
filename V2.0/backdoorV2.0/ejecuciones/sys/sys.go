@@ -10,6 +10,11 @@ import (
 	"unsafe"
 )
 
+const (
+	LOGO_WARNING = 0x00000030
+	NOTIFICACION = 0x00200000
+)
+
 // crea un popup con un mensaje en windows
 func MsgCartel(titulo string, msg string) error {
 	sys, loaderr := syscall.LoadDLL("User32.dll")
@@ -23,13 +28,11 @@ func MsgCartel(titulo string, msg string) error {
 		return finderr
 	}
 
-	const LOGO_WARNING = 0x00000030
-
 	sysfind.Call(
 		0,
 		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(msg))),
 		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(titulo))), // transformo string a utf16 y devuelvo el puntero, lo trato con usafe y lo transformo en uintprt (valor solicitado)
-		LOGO_WARNING,
+		LOGO_WARNING|NOTIFICACION,
 	)
 
 	return nil
