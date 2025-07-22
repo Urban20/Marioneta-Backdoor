@@ -6,32 +6,44 @@
 package sistema
 
 import (
-	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 const (
 	LOGO_WARNING = 0x00000030
 	NOTIFICACION = 0x00200000
+	DLL          = "User32.dll"
+	PROC         = "MessageBoxW"
 )
 
 // crea un popup con un mensaje en windows
 func MsgCartel(titulo string, msg string) error {
-	sys, loaderr := syscall.LoadDLL("User32.dll")
+
+	sys, loaderr := windows.LoadDLL(DLL)
+
 	if loaderr != nil {
 		return loaderr
 	}
 
-	sysfind, finderr := sys.FindProc("MessageBoxW")
+	defer func() error { // liberar la dll
+		relerr := sys.Release()
+		if relerr != nil {
+			return relerr
+		}
+		return nil
+	}()
 
-	if finderr != nil {
-		return finderr
+	sysfind, procerr := sys.FindProc(PROC)
+	if procerr != nil {
+		return procerr
 	}
 
 	sysfind.Call(
 		0,
-		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(msg))),
-		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(titulo))), // transformo string a utf16 y devuelvo el puntero, lo trato con usafe y lo transformo en uintprt (valor solicitado)
+		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr(msg))),
+		uintptr(unsafe.Pointer(windows.StringToUTF16Ptr(titulo))), // transformo string a utf16 y devuelvo el puntero, lo trato con usafe y lo transformo en uintprt (valor solicitado)
 		LOGO_WARNING|NOTIFICACION,
 	)
 

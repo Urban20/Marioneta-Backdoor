@@ -201,7 +201,9 @@ func Cliente(cliente net.Conn) {
 
 		msgerr := sistema.MsgCartel("Hackeado", msg[1])
 
-		if msgerr == nil {
+		if msgerr != nil {
+			Envio(cliente, []byte(ROJO+fmt.Sprintf("\n- error al mostrar el mensaje: %s\n", msgerr.Error())+RESET))
+		} else {
 			Envio(cliente, []byte(VERDE+"\n- el usuario vió el mensaje\n"+RESET))
 		}
 
