@@ -150,27 +150,6 @@ func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
 }
 ```
 
-## Compilación
-
-### 🛠 Para Distribución
-```bash
-# Versión Python (V1.0)
-pyinstaller --onefile --windowed bdor.pyw  # Para backdoor
-pyinstaller --onefile cliente.py           # Para cliente
-
-# Versión Go (V2.0)
-cd server
-go build -ldflags "-s -w" -o backdoor.exe  # Backdoor optimizado
-cd ../comando
-go build -ldflags "-s -w" -o cliente.exe   # Cliente optimizado
-```
-
-### 🔐 Configuración de Firewall
-Ejecute `firewall.bat` como administrador para abrir el puerto necesario:
-```bat
-netsh advfirewall firewall add rule name="RemoteControl" dir=in action=allow protocol=TCP localport=9999
-```
-
 ## Consideraciones de Seguridad
 
 ### 🛡 Medidas Implementadas
