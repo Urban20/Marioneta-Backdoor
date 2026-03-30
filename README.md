@@ -1,4 +1,4 @@
-# - Herramienta de Control Remoto de computadoras para Redes Locales
+# Herramienta de Control Remoto de Computadoras para Redes Locales
 
 <p align="center">
   <img src="https://i.postimg.cc/25mCzCp7/64192c15-1039-4c90-ac27-15fd8d8abdc4.png" alt="RemoteControl Toolkit" width="300"/>
@@ -9,10 +9,8 @@
   <img alt="Licencia" src="https://img.shields.io/badge/Licencia-MIT-yellow?style=flat-square">
 </p>
 
-> ⚠️ **ADVERTENCIA ÉTICA IMPORTANTE**  
-> El uso en sistemas sin autorización expresa es ilegal. No me hago responsable de su mal uso. Desarrollé estos programas para utilizar en sistemas propios
-
-
+> **ADVERTENCIA ÉTICA**
+> El uso en sistemas sin autorización expresa es ilegal. No me hago responsable de su mal uso. Desarrollé estas herramientas para utilizar en sistemas propios.
 
 ## Tabla de Contenidos
 - [Visión General](#visión-general)
@@ -22,11 +20,10 @@
 - [Funcionalidades Detalladas](#funcionalidades-detalladas)
 - [Compilación](#compilación)
 - [Consideraciones de Seguridad](#consideraciones-de-seguridad)
-- [Apoyá el Proyecto](#-apoyá-el-proyecto)
 
-## ¿Tenés alguna pregunta o idea que te gustaria compartir?
+## ¿Tenés alguna pregunta o idea que te gustaría compartir?
 
-#### Podés exponerla en :
+Podés exponerla en:
 
 <a href="https://github.com/Urban20/Marioneta-Backdoor/discussions">
   <img src="https://img.shields.io/badge/Discusiones-%23EA4C89.svg?style=social&logo=github" alt="Discussions" width=120>
@@ -43,33 +40,32 @@ Ambos componentes se comunican a través de TCP, permitiendo ejecutar comandos, 
 
 ## Versiones Disponibles
 
-| Característica              | Versión Python (V1.0) | Versión Go (V2.0) |
-|-----------------------------|------------------------|-------------------|
-| **Velocidad**               | ⭐⭐                   | ⭐⭐⭐⭐            |
-| **Seguridad**               | ⭐⭐                    | ⭐⭐⭐⭐            |
-| **Pequeña persistencia (Startup)**  | ✔️                     | ❌                |
-| **Captura de pantalla**     | ✔️                     | ✔️ (Mejorada)     |
-| **Reconexión automática**   | ✔️                     | ✔️ (Robusta)      |
-| **Ejecución oculta**        | ✔️                     | ✔️                |
-| **Manejo de errores**       | Básico                 | Avanzado          |
+| Característica                     | Versión Python (V1.0) | Versión Go (V2.0)  |
+|------------------------------------|-----------------------|--------------------|
+| **Velocidad**                      | Bueno                 | Excelente          |
+| **Seguridad**                      | Bueno                 | Excelente          |
+| **Pequeña persistencia (Startup)** | Si                    | No                 |
+| **Captura de pantalla**            | Si                    | Si (Mejorada)      |
+| **Reconexión automática**          | Si                    | Si (Robusta)       |
+| **Ejecución oculta**               | Si                    | Si                 |
+| **Manejo de errores**              | Básico                | Avanzado           |
 
 ## Características Clave
 
-### 🔧 Funcionalidades Comunes (Ambas Versiones)
+### Funcionalidades Comunes (Ambas Versiones)
 - Ejecución remota de comandos PowerShell/CMD
 - Captura de pantalla remota
 - Envío de mensajes de sistema (Windows)
 - Cambio de directorio remoto
 - Reconexión automática
 
-### 🚀 Mejoras en V2.0 (Go)
+### Mejoras en V2.0 (Go)
 - **Gestión avanzada de imágenes**: Transferencia eficiente de capturas de pantalla
 - **Timeouts inteligentes**: Evita bloqueos con cancelación contextual
 
-
 ## Instalación y Uso
 
-### 🔌 Requisitos Previos
+### Requisitos Previos
 ```bash
 # Para versión Python
 pip install -r requirements.txt
@@ -78,7 +74,7 @@ pip install -r requirements.txt
 go get github.com/kbinani/screenshot
 ```
 
-### ▶️ Ejecución (Versión Python - V1.0)
+### Ejecución (Versión Python - V1.0)
 
 1. **En el equipo objetivo (Backdoor):**
 ```bash
@@ -92,7 +88,7 @@ python cliente.py --ip [IP_OBJETIVO] --puerto [PUERTO]
 python cliente.py --ip 192.168.1.20 --puerto 999
 ```
 
-### ▶️ Ejecución (Versión Go - V2.0)
+### Ejecución (Versión Go - V2.0)
 
 1. **En el equipo objetivo (Backdoor):**
 ```bash
@@ -112,17 +108,19 @@ go build -o cliente.exe
 
 ## Funcionalidades Detalladas
 
-### 💻 Comandos Disponibles
-| Comando      | Función                          
-|--------------|----------------------------------
-| `0`          | Limpiar consola del cliente      |
-| `1`          | Apagar equipo remoto             |
-| `2`          | Enviar mensaje de sistema        |
-| `ss`         | Capturar pantalla remota         |
-| `cd [ruta]`  | Cambiar directorio remoto        |
-| `q`          | Salir del cliente                |
-| `[cualquier comando]` | Ejecutar comando personalizado 
-### 📸 Flujo de Captura de Pantalla
+### Comandos Disponibles
+
+| Comando               | Función                               |
+|-----------------------|---------------------------------------|
+| `0`                   | Limpiar consola del cliente           |
+| `1`                   | Apagar equipo remoto                  |
+| `2`                   | Enviar mensaje de sistema             |
+| `ss`                  | Capturar pantalla remota              |
+| `cd [ruta]`           | Cambiar directorio remoto             |
+| `q`                   | Salir del cliente                     |
+| `[cualquier comando]` | Ejecutar comando personalizado        |
+
+### Flujo de Captura de Pantalla
 ```mermaid
 sequenceDiagram
     Cliente->>Backdoor: Envía comando "ss"
@@ -134,46 +132,17 @@ sequenceDiagram
     Cliente->>Cliente: Guarda como "screen.jpg"
 ```
 
-### 🔄 Reconexión Automática (V2.0)
-```go
-func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
-	remoto.Borrar_consola()
-	fmt.Println("[*] reconectando...")
-	close_error := net.Close()
-	if close_error != nil {
-		fmt.Println(color.Rojo+"[!] error fatal: ", close_error.Error()+color.Reset)
-		os.Exit(1)
-	} else {
-		Conexion(ip, tiempo)
-	}
-
-}
-```
-
 ## Consideraciones de Seguridad
 
-### 🛡 Medidas Implementadas
+### Medidas Implementadas
 - **Comunicación solo en redes locales**: No expuesto a Internet
 - **Ejecución oculta**: Los comandos no muestran ventanas
 - **Validación de comandos**: Prevención básica de inyección
 - **Timeouts configurables**: Evita conexiones colgadas
 
-### ⚠️ Limitaciones de Seguridad
+### Limitaciones de Seguridad
 1. **Sin encriptación**: La comunicación es en texto claro
 2. **Sin autenticación**: Cualquiera en la red puede conectarse
 3. **Persistencia (V1.0)**: Se copia al Startup sin consentimiento
 
-> **NOTA**: Estas herramientas son para uso en entornos controlados. Nunca las use en sistemas sin permiso explícito.
-
-
----
-
-## ⭐ Apoyá el Proyecto
-Si te gusta mi proyecto, dale una estrellita
-
-Con esto me ayudas a:
-- 📈 Aumentar la visibilidad del proyecto
-
-- 🚀 Motivarme a seguir desarrollando mejoras
-
-- 🔍 Permitir que más personas lo descubran
+> **NOTA**: Estas herramientas son para uso en entornos controlados. No las uses en sistemas sin permiso explícito.
