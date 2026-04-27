@@ -4,6 +4,7 @@ package remoto
 import (
 	color "comando/colores"
 	"comando/conex/comandos/ss"
+	"comando/consola"
 	"comando/input"
 	"context"
 	"errors"
@@ -23,6 +24,17 @@ const INSTRUCCION = `
 //[q] salir               //
 //[ss] capturar pantalla  //
 `
+const (
+	OP1 = "limpiar consola"
+	OP2 = "apagar equipo"
+	OP3 = "enviar mensaje"
+	OP4 = "salir"
+	OP5 = "capturar pantalla"
+	OP6 = "enviar comando"
+)
+
+var Instrucciones = []string{OP1, OP2, OP3, OP4, OP5, OP6}
+
 const (
 	TIMEOUT = 10   // tiempo en segundos que espera el cliente para recibir un paquete
 	BUFFER  = 1024 //tamaño del buffer de funcion envio
@@ -79,32 +91,36 @@ func Comando(conexiones net.Conn) error {
 	// error que fuerza la recnexion para evitar problemas de desincronizacion con el host
 	var reconectar = errors.New("reconexion")
 
-	println(color.Violeta + INSTRUCCION + color.Reset)
-	entrada := input.Input("[#] comando >> ")
-	switch entrada {
-	case "0": // borrar consola
+	//println(color.Violeta + INSTRUCCION + color.Reset)
+
+	eleccion := consola.Menu(Instrucciones)
+
+	switch eleccion {
+	case OP1: // borrar consola
 		err := Borrar_consola()
 		if err != nil {
 			fmt.Println(err)
 		}
 
-	case "1": // apagar equipo
+	case OP2: // apagar equipo
 		err := envio(conexiones, "shutdown /s")
 		if err != nil {
 			return err
 		}
-	case "2": // automatizacion de msg para ciertas ediciones de windows
+	case OP3: // automatizacion de msg para ciertas ediciones de windows
 
 		mensaje := input.Input("mensaje >> ")
 
 		envio(conexiones, fmt.Sprintf("msn-%s", mensaje))
 
-	case "q":
+	case OP4:
 		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
 		envio(conexiones, "q")
-		conexiones.Close()
+		defer conexiones.Close()
 		os.Exit(0)
-	case "ss":
+
+	case OP5:
+
 		ch_img := make(chan []byte)
 		ch_err := make(chan error)
 		contex, cancel := context.WithTimeout(context.Background(), time.Second*5)
@@ -139,7 +155,10 @@ func Comando(conexiones net.Conn) error {
 			}
 
 		}
-	default:
+	case OP6:
+		fmt.Print("\n")
+		entrada := input.Input("[#] enviar comando >> ")
+		fmt.Print("\n")
 		err := envio(conexiones, entrada)
 		if err != nil {
 			return err

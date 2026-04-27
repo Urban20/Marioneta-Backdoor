@@ -1,5 +1,8 @@
 module comando
 
-go 1.24.3
+go 1.25.0
 
-require github.com/Urban20/ColorGo v0.0.0-20250614143934-678decdc5fc3 // indirect
+require (
+	golang.org/x/sys v0.43.0 // indirect
+	golang.org/x/term v0.42.0 // indirect
+)

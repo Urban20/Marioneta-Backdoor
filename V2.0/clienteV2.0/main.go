@@ -29,9 +29,10 @@ func main() {
 	ip := *arg
 
 	if ip != "" {
+
 		fmt.Println(color.Violeta + color.LOGO + color.Reset)
-		conex_error := conexiones.Conexion(ip, TIMEOUT)
-		if conex_error != nil {
+
+		if conex_error := conexiones.Conexion(ip, TIMEOUT); conex_error != nil {
 
 			fmt.Println("error: ", conex_error)
 			os.Exit(1)

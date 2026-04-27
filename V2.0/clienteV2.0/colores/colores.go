@@ -1,7 +1,9 @@
 // colores y apartado visual del programa
 package color
 
-import colorgo "github.com/Urban20/ColorGo"
+import (
+	"fmt"
+)
 
 const LOGO = ` 
 _  _ ____ ____ _ ____ _  _ ____ ___ ____ 
@@ -13,9 +15,26 @@ _  _ ____ ____ _ ____ _  _ ____ ___ ____
 -----------------------------------------                           
 `
 
+func rgb(r, g, b int, fondo bool) string {
+
+	var d int
+
+	if fondo {
+
+		d = 48
+
+	} else {
+
+		d = 38
+	}
+
+	return fmt.Sprintf("\033[%d;2;%d;%d;%dm", d, r, g, b)
+}
+
 // colores de terminal que se usan en los outputs de la consola
-var Reset = colorgo.Formateo("RESET")
-var F_violeta = colorgo.Formateo("F_VIOLETA")
-var Verde = colorgo.Formateo("VERDE")
-var Rojo = colorgo.Formateo("ROJO")
-var Violeta = colorgo.Formateo("VIOLETA")
+var Reset = "\033[0m"
+var F_violeta = rgb(134, 72, 232, true)
+var Amarillo = "\033[0;33m"
+var Verde = "\033[0;32m"
+var Rojo = "\033[0;31m"
+var Violeta = rgb(134, 72, 232, false)
