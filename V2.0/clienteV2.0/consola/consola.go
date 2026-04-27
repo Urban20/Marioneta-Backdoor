@@ -81,7 +81,10 @@ func desplegar_opcion(opciones []string) string {
 	}
 }
 func Imprimir_logo() {
-	fmt.Println(color.Violeta + color.LOGO + color.Reset)
+	fmt.Print(color.Violeta)
+	fmt.Printf(color.LOGO, color.VERSION)
+	fmt.Print(color.Reset + "\n")
+
 }
 
 func Menu(opciones []string) string {
