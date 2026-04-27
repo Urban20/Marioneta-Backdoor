@@ -13,6 +13,7 @@ cliente hecho en golang:
 import (
 	color "comando/colores"
 	conexiones "comando/conex"
+	"comando/consola"
 	"flag"
 	"fmt"
 	"os"
@@ -25,12 +26,11 @@ const TIMEOUT = 5
 func main() {
 
 	flag.Parse()
-
 	ip := *arg
-
 	if ip != "" {
 
-		fmt.Println(color.Violeta + color.LOGO + color.Reset)
+		fmt.Print("\033[?1049h")
+		consola.Borrar_consola()
 
 		if conex_error := conexiones.Conexion(ip, TIMEOUT); conex_error != nil {
 

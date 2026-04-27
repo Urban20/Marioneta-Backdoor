@@ -4,6 +4,7 @@ package conexiones
 import (
 	color "comando/colores"
 	remoto "comando/conex/comandos"
+	"comando/consola"
 	"errors"
 	"fmt"
 	"net"
@@ -17,7 +18,7 @@ en caso de algun error se llama a esta funcion para reiniciar la conexion y no a
 es una solucion que encontre para no saturar el programa y que se sigan generando errores
 */
 func Reconexion(net net.Conn, ip string, tiempo time.Duration) {
-	remoto.Borrar_consola()
+	consola.Borrar_consola()
 	fmt.Println("[*] reconectando...")
 	close_error := net.Close()
 	if close_error != nil {

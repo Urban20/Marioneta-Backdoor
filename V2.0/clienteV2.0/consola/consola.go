@@ -4,6 +4,7 @@ import (
 	color "comando/colores"
 	"fmt"
 	"os"
+	"strings"
 
 	"golang.org/x/term"
 )
@@ -35,6 +36,14 @@ func leer_tecla(i *int, tecla []byte) bool {
 	}
 
 	return false
+
+}
+
+// abstraigo la funcion para borrar consola
+func Borrar_consola() {
+	fmt.Println(strings.Repeat("\n", 50))
+	fmt.Print("\033[H")
+	Imprimir_logo()
 
 }
 
@@ -70,6 +79,9 @@ func desplegar_opcion(opciones []string) string {
 		actualizar_seccion(op_largo)
 
 	}
+}
+func Imprimir_logo() {
+	fmt.Println(color.Violeta + color.LOGO + color.Reset)
 }
 
 func Menu(opciones []string) string {

