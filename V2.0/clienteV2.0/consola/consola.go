@@ -65,7 +65,7 @@ func desplegar_opcion(opciones []string) string {
 			}
 
 			if op == opciones[i] {
-				fmt.Println(color.Amarillo + op + color.Reset)
+				fmt.Println(color.Seleccion + op + color.Reset)
 			} else {
 				fmt.Println(op)
 			}

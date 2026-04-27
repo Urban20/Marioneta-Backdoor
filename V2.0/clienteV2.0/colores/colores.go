@@ -34,7 +34,8 @@ func rgb(r, g, b int, fondo bool) string {
 // colores de terminal que se usan en los outputs de la consola
 var Reset = "\033[0m"
 var F_violeta = rgb(134, 72, 232, true)
-var Amarillo = "\033[0;33m"
+var Amarillo = "\033[0;93m"
 var Verde = "\033[0;32m"
 var Rojo = "\033[0;31m"
 var Violeta = rgb(134, 72, 232, false)
+var Seleccion = "\033[30;47m"
