@@ -20,6 +20,7 @@ import (
 )
 
 var arg = flag.String("IP", "", "[ip]:[puerto del host]")
+var ansierr = consola.Iniciar_ANSI()
 
 const TIMEOUT = 5
 
@@ -27,6 +28,11 @@ func main() {
 
 	flag.Parse()
 	ip := *arg
+
+	if ansierr != nil {
+		panic("esta terminal es incompatible con el programa")
+	}
+
 	if ip != "" {
 
 		fmt.Print("\033[?1049h")
