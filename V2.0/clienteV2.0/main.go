@@ -11,43 +11,37 @@ cliente hecho en golang:
 */
 
 import (
-	color "comando/colores"
 	conexiones "comando/conex"
 	"comando/consola"
-	"flag"
 	"fmt"
 	"os"
 )
 
-var arg = flag.String("IP", "", "[ip]:[puerto del host]")
 var ansierr = consola.Iniciar_ANSI()
 
 const TIMEOUT = 5
 
 func main() {
 
-	flag.Parse()
-	ip := *arg
+	args := os.Args
+
+	if len(args) != 2 {
+		fmt.Print("\n")
+		fmt.Println("uso: [programa] [ip:puerto]")
+		os.Exit(1)
+	}
 
 	if ansierr != nil {
 		panic("esta terminal es incompatible con el programa")
 	}
 
-	if ip != "" {
+	ip := args[1]
 
-		fmt.Print("\033[?1049h")
-		consola.Borrar_consola()
+	if conex_error := conexiones.Conexion(ip, TIMEOUT); conex_error != nil {
 
-		if conex_error := conexiones.Conexion(ip, TIMEOUT); conex_error != nil {
+		fmt.Println(conex_error)
 
-			fmt.Println("error: ", conex_error)
-			os.Exit(1)
-		}
-
-	} else {
-		fmt.Println(color.Rojo + "[!] ingresar un valor de ip (ip:puerto)" + color.Reset)
-		os.Exit(0)
-
+		os.Exit(1)
 	}
 
 }

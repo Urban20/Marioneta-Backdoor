@@ -5,7 +5,6 @@ import (
 	color "comando/colores"
 	remoto "comando/conex/comandos"
 	"comando/consola"
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -36,8 +35,11 @@ func Conexion(ip string, tiempo time.Duration) error {
 	conec, dial_error := net.DialTimeout("tcp", ip, time.Second*tiempo)
 
 	if dial_error != nil { // si hay algun error
-		return errors.New("\n[!]hubo un error al establecer conexion")
+		return dial_error
 	}
+
+	fmt.Print("\033[?1049h")
+	consola.Borrar_consola()
 
 	fmt.Printf(color.F_violeta+"[#] conexion establecida %s --> %s\n\n\r\r"+color.Reset, conec.LocalAddr(), conec.RemoteAddr())
 

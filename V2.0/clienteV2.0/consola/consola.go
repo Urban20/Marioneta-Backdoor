@@ -23,7 +23,7 @@ func leer_tecla(i *int, tecla []byte) bool {
 	os.Stdin.Read(tecla)
 	flechas := tecla[2]
 
-	if tecla[0] == 13 {
+	if tecla[0] == 13 { // enter
 
 		return true
 
