@@ -87,14 +87,18 @@ func Imprimir_logo() {
 
 }
 
-func Menu(opciones []string) string {
+func Menu(opciones []string) (string, error) {
 
 	fd := int(os.Stdin.Fd())
 
-	st, _ := term.MakeRaw(fd)
+	st, rawerr := term.MakeRaw(fd)
+
+	if rawerr != nil {
+		return "", rawerr
+	}
 
 	defer term.Restore(fd, st)
 
-	return desplegar_opcion(opciones)
+	return desplegar_opcion(opciones), nil
 
 }

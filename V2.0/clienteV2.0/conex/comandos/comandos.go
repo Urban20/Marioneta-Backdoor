@@ -74,7 +74,13 @@ func Comando(conexiones net.Conn) error {
 
 	//println(color.Violeta + INSTRUCCION + color.Reset)
 
-	eleccion := consola.Menu(Instrucciones)
+	eleccion, menu_error := consola.Menu(Instrucciones)
+
+	if menu_error != nil {
+
+		return menu_error
+	}
+
 	fmt.Print("\n")
 
 	switch eleccion {
