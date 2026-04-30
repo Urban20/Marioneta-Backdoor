@@ -27,7 +27,9 @@ func main() {
 
 	if len(args) != 2 {
 		fmt.Print("\n")
-		fmt.Println("uso: [programa] [ip:puerto]")
+		fmt.Println("USO: [programa] [ip:puerto]")
+		fmt.Println("Ejemplo: ./[Programa] 192.168.0.50:9999\nNota: ya no es necesaria la flag --IP")
+		fmt.Print("\n")
 		os.Exit(1)
 	}
 
